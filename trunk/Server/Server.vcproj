@@ -238,10 +238,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\TEAStuff.cpp"
-				>
-			</File>
 			<Filter
 				Name="Net"
 				>
