@@ -318,9 +318,7 @@ unsigned int CBitStream::GetNumberOfUnreadBits()
 void CBitStream::Write(const String &inString)
 {
 	size_t sLength = inString.GetLength();
-	CLogFile::Printf("Writing length %d", sLength);
 	Write(sLength);
-	CLogFile::Printf("Writing string %s", inString.C_String());
 	Write(inString.C_String(), sLength);
 }
 
@@ -334,13 +332,17 @@ bool CBitStream::Read(String &outString)
 	if(bReturn && (sLength > 0))
 	{
 		outString.Clear();
-		outString.Allocate(sLength);
+		outString.Allocate(sLength + 1);
 		char * szString = outString.GetData();
 		bReturn = Read(szString, sLength);
 
 		if(bReturn && (szString != NULL))
 		{
 			szString[sLength] = '\0';
+		}
+		else
+		{
+			outString.Clear();
 		}
 	}
 
