@@ -90,7 +90,7 @@ int CScriptVM__Process()
 void _declspec(naked) CScriptVM__Process_Hook()
 {
 	// Usually this would loop through all running script threads
-	// and call scrThread::Loop with opsToExecute set to (FORGOT THE VALUE)
+	// and call scrThread::Loop with opsToExecute set to 1100000
 	_asm
 	{
 		pushad

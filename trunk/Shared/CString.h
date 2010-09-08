@@ -14,13 +14,7 @@
 class String
 {
 private:
-#ifdef C_STRING
-	size_t m_sBytesAllocated;
-	char * m_szString;
-	char   m_szEmptyString[1];
-#else
-	std::string * m_strString;
-#endif
+	std::string m_strString;
 	size_t m_sLimit;
 
 	void          Init();
@@ -31,6 +25,7 @@ public:
 	~String();
 
 	operator const char * () { return Get(); }
+	String& operator = (const String strString);
 	String& operator = (const char * szString);
 	String& operator += (const char * szString);
 	String& operator += (const unsigned char ucChar);

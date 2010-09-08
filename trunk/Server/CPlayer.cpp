@@ -16,7 +16,7 @@ CPlayer::CPlayer(EntityId playerId, String strName)
 {
 	m_playerId = playerId;
 	m_strName.SetLimit(NICK_MAX);
-	m_strName.Set(strName.C_String());
+	m_strName = strName;
 	m_bSpawned = false;
 }
 

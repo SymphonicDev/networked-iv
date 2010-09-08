@@ -325,13 +325,12 @@ void CBitStream::Write(const String &inString)
 // Read a String from the BitStream.
 bool CBitStream::Read(String &outString)
 {
-	// TODO: Better method, this is slow
+	outString.Clear();
 	size_t sLength = 0;
 	bool bReturn = Read(sLength);
 
 	if(bReturn && (sLength > 0))
 	{
-		outString.Clear();
 		outString.Allocate(sLength + 1);
 		char * szString = outString.GetData();
 		bReturn = Read(szString, sLength);

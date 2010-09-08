@@ -33,7 +33,7 @@ struct IVPlayerPed
 	PAD(pad6, 0x1);							 // 549-54A
 	WORD m_wMaxHealth;						 // 54A-54C
 	WORD m_wMaxArmour;						 // 54C-54E
-	PAD(pad7, 0x1);							 // 54E-54F
+	PAD(pad7, 0x1);							 // 54E-54F // Doesn't lose money after jail/arrest?
 	BYTE m_byteFreeHealthCareset;			 // 54F-550
 	BYTE m_byteCanDoDriveBy;				 // 550-551
 	BYTE m_byteCanBeHassledByGangs;			 // 551-552
