@@ -63,16 +63,6 @@ void CServer::OnLoad()
 #endif
 
 	CLogFile::Printf("Server started");
-
-	CLogFile::Printf("Got InitialData RPC from player %d", 0);
-
-	// Read the data they sent us
-	String strName;
-
-	strName.Set("Sam");
-
-	// Add them to the player manager
-	g_pPlayerManager->Add(0, strName);
 }
 
 void CServer::Process()
