@@ -10,24 +10,27 @@
 
 #include <StdInc.h>
 
+typedef void (_cdecl * NativeFunction_t)(scrNativeCallContext * cxt);
+
 extern CClient * g_pClient;
 
 void InvokeNativeInternal(unsigned int uHash, NativeContext * pContext)
 {
 	DWORD dwFunction = (g_pClient->GetBaseAddress() + FUNC_ScrVM__FindNativeAddress_7);
+	DWORD dwNativeAddress = NULL;
 	_asm
 	{
 		xor eax, eax
-		push esi
-		mov esi, uHash
-		call dwFunction
-		pop esi
-		test eax, eax
-		jz invalid
-		push pContext
-		call eax
-		add esp, 4
-invalid:
-		ret
+			push esi
+			mov esi, uHash
+			call dwFunction
+			pop esi
+			mov dwNativeAddress, eax
+	}
+
+	if(dwNativeAddress)
+	{
+		NativeFunction_t pfnNativeFunction = (NativeFunction_t)dwNativeAddress;
+		pfnNativeFunction(pContext);
 	}
 }
