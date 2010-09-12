@@ -286,9 +286,11 @@ void CClient::OnD3DEndScene(IDirect3DDevice9 * pD3DDevice)
 		}
 		else
 		{
-			CLogFile::Printf("Destroying player (%d, 0x%p, 0x%p)...", CPools::GetLocalPlayerIndex(), CPools::GetPlayerPedFromIndex(1), CPools::GetPlayerPedFromIndex(0));
+			CLogFile::Printf("Destroying player (%d, 0x%p, 0x%p)...", CPools::GetLocalPlayerIndex(), CPools::GetPlayerInfoFromIndex(1), CPools::GetPlayerInfoFromIndex(0));
 			pPlayer->Destroy();
-			CLogFile::Printf("Player destroyed (%d, 0x%p, 0x%p)!", CPools::GetLocalPlayerIndex(), CPools::GetPlayerPedFromIndex(1), CPools::GetPlayerPedFromIndex(0));
+			CLogFile::Printf("Player destroyed (%d, 0x%p, 0x%p)!", CPools::GetLocalPlayerIndex(), CPools::GetPlayerInfoFromIndex(1), CPools::GetPlayerInfoFromIndex(0));
+			delete pPlayer;
+			CLogFile::Printf("Player deleted (%d, 0x%p, 0x%p)!", CPools::GetLocalPlayerIndex(), CPools::GetPlayerInfoFromIndex(1), CPools::GetPlayerInfoFromIndex(0));
 		}
 
 		bCreatePlayer = !bCreatePlayer;
@@ -310,18 +312,17 @@ void CClient::OnD3DEndScene(IDirect3DDevice9 * pD3DDevice)
 #define MODEL_IG_BRUCIE 0x98E29920
 		int iModelIndex = g_pGame->LoadModel(MODEL_IG_BRUCIE);
 		CLogFile::Printf("Model loaded");
-		DWORD dwFunc = (GetBaseAddress() + /*0x9C0AA0*/0x8AC500); // CPlayerPed::SetModelIndex // CPed::SetModelIndex
-		//DWORD dwFunc = (GetBaseAddress() + 0x9C0AA0); // CPlayerPed::SetModelIndex
-		IVPlayerPed * pPlayerPed = CPools::GetPlayerPedFromIndex(0);
-		IVPed * pPed = pPlayerPed->m_pPed;
+#define FUNC_CPlayerPed__SetModelIndex 0x9C0AA0
+		DWORD dwFunc = (GetBaseAddress() + FUNC_CPlayerPed__SetModelIndex);
+		IVPlayerInfo * pPlayerInfo = CPools::GetPlayerInfoFromIndex(0);
+		IVPlayerPed * pPlayerPed = pPlayerInfo->m_pPlayerPed;
 		CLogFile::Printf("Calling function...");
 		_asm
 		{
 			push iModelIndex
-			//mov ecx, pPlayerPed
-			mov ecx, pPed
+			mov ecx, pPlayerPed
 			call dwFunc
-			//add esp, 4
+			add esp, 4
 		}
 		CLogFile::Printf("Model changed!");
 		//InvokeNative<void *>(0x232F1A85, 0, MODEL_IG_BRUCIE); // CHANGE_PLAYER_MODEL // MODEL_IG_BRUCIE

@@ -14,6 +14,7 @@
 #include <tlhelp32.h>
 #include <detours.h>
 #include <ShlObj.h>
+#include <time.h>
 
 // Shared
 #include <SharedUtility.h>

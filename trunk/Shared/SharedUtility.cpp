@@ -182,4 +182,20 @@ int AnsiToUnicode(char * szAnsiString, size_t sAnsiStringLength, wchar_t * wszUn
 	return MultiByteToWideChar(CP_ACP, dwFlags, szAnsiString, sAnsiStringLength, wszUnicodeString, sUnicodeStringLength);
 }
 #endif
+
+const char * GetTimeAndDate()
+{
+	time_t timeValue;
+	time(&timeValue);
+	return ctime(&timeValue);
+}
+
+const char * GetTime()
+{
+	static char szTime[256];
+	time_t t = time(NULL);
+	const struct tm * tm = localtime(&t);
+	strftime(szTime, sizeof(szTime), "%H:%M:%S", tm);
+	return szTime;
+}
 };

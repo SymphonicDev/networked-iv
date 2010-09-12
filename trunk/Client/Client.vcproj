@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;../Shared"
+				AdditionalIncludeDirectories=".;../Shared;./DXSDK/Include;../Shared/Detours"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;CLIENT_EXPORTS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,7 +63,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="d3dx9.lib"
+				OutputFile="$(OutDir)\$(ProjectName)_d.dll"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="./DXSDK/Lib;../Shared/Detours"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -117,7 +119,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;../Shared"
+				AdditionalIncludeDirectories=".;../Shared;./DXSDK/Include;../Shared/Detours"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;CLIENT_EXPORTS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -139,6 +141,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="d3dx9.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="./DXSDK/Lib;../Shared/Detours"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -305,6 +308,10 @@
 				</File>
 				<File
 					RelativePath=".\CIVPhysical.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CIVPlayerInfo.cpp"
 					>
 				</File>
 				<File
@@ -478,6 +485,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\CIVPlayerInfo.h"
+					>
+				</File>
+				<File
 					RelativePath=".\CIVPlayerPed.h"
 					>
 				</File>
@@ -569,6 +580,258 @@
 					RelativePath="..\Shared\RPCIdentifiers.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="DXSDK"
+				>
+				<Filter
+					Name="Include"
+					>
+					<File
+						RelativePath=".\DXSDK\Include\audiodefs.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\comdecl.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3D10.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3D10_1.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3D10_1shader.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3D10effect.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3d10misc.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3d10sdklayers.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3D10shader.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3d9.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3d9caps.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3d9types.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3DX10.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx10async.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3DX10core.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3DX10math.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3DX10math.inl"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3DX10mesh.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\D3DX10tex.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9anim.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9core.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9effect.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9math.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9math.inl"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9mesh.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9shader.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9shape.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9tex.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\d3dx9xof.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\ddraw.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dinput.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dinputd.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dsconf.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dsetup.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dsound.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dvp.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dxdiag.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\DxErr.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dxerr9.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dxfile.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\DXGI.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\DXGIType.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\dxsdkver.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\gameux.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\multimon.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\PIXPlugin.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\rmxfguid.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\rmxftmpl.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\rpcsal.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\X3DAudio.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\xact3.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\xact3d3.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\xact3wb.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\XAPO.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\XAPOBase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\XAPOFX.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\xaudio2.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\xaudio2fx.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\XInput.h"
+						>
+					</File>
+					<File
+						RelativePath=".\DXSDK\Include\xma2defs.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

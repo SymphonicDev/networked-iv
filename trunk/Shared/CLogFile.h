@@ -17,7 +17,7 @@ private:
 	static FILE * m_fLogFile;
 
 public:
-	static void Open(char * szLogFile);
+	static void Open(char * szLogFile, bool bAppend = false);
 	static void Printf(const char * szFormat, ...);
 	static void Close();
 };

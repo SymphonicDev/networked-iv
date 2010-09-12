@@ -21,6 +21,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <time.h>
 
 // Shared
 #include <Common.h>

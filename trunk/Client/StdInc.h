@@ -17,6 +17,7 @@
 #include <detours.h>
 #include <list>
 #include <string>
+#include <time.h>
 
 // Shared
 #include <Common.h>
@@ -59,6 +60,7 @@
 #include "CIVPhysical.h"
 #include "CIVPed.h"
 #include "CIVPlayerPed.h"
+#include "CIVPlayerInfo.h"
 #include "CPools.h"
 #include "CIVWorld.h"
 #include "CPlayer.h"

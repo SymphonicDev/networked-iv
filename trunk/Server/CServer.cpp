@@ -33,7 +33,7 @@ CServer::~CServer()
 void CServer::OnLoad()
 {
 	// Open the log file
-	CLogFile::Open("Server.log");
+	CLogFile::Open("Server.log", true);
 
 	CLogFile::Printf("Starting up server");
 

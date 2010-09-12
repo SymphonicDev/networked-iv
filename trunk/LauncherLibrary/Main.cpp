@@ -105,9 +105,9 @@ BOOL WINAPI CreateProcessW_Hook(LPCWSTR lpApplicationName, LPWSTR lpCommandLine,
 
 	if(bReturn)
 	{
-		// Get the full path of Client.dll
+		// Get the full path of the client dll
 		char szLibraryPath[MAX_PATH];
-		sprintf(szLibraryPath, "%sClient.dll", SharedUtility::GetAppPath());
+		sprintf(szLibraryPath, "%sClient" DEBUG_SUFFIX ".dll", SharedUtility::GetAppPath());
 
 		// Inject Client.dll into GTAIV.exe
 		int iReturn = SharedUtility::InjectLibraryIntoProcess(lpProcessInformation->hProcess, szLibraryPath);

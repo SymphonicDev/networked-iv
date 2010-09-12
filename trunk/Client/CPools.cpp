@@ -71,77 +71,78 @@ DWORD CPools::GetVehicleFromHandle(unsigned int uiHandle)
 	return dwVehicle;
 }
 
-IVPlayerPed * CPools::GetPlayerPedFromIndex(unsigned int uiIndex)
+IVPlayerInfo * CPools::GetPlayerInfoFromIndex(unsigned int uiIndex)
 {
-	// Is the index more than the player ped array size?
-	if(uiIndex > PLAYER_PED_ARRAY_SIZE)
+	// Is the index more than the player info array size?
+	if(uiIndex > PLAYER_INFO_ARRAY_SIZE)
 		return NULL;
 
-	// Get the player ped pointer array
-	IVPlayerPed ** pPlayerPeds = (IVPlayerPed **)(g_pClient->GetBaseAddress() + VAR_PlayerPedArray);
+	// Get the player info pointer array
+	IVPlayerInfo ** pPlayerInfos = (IVPlayerInfo **)(g_pClient->GetBaseAddress() + VAR_PlayerInfoArray);
 
-	// Return the player ped pointer
-	return pPlayerPeds[uiIndex];
+	// Return the player info pointer
+	return pPlayerInfos[uiIndex];
 }
 
-IVPlayerPed * CPools::GetPlayerPedFromPed(IVPed * pPed)
+IVPlayerInfo * CPools::GetPlayerInfoFromPlayerPed(IVPlayerPed * pPlayerPed)
 {
-	// Loop through all player ped indexes
-	for(unsigned int i = 0; i < PLAYER_PED_ARRAY_SIZE; i++)
+	// Loop through all player info indexes
+	for(unsigned int i = 0; i < PLAYER_INFO_ARRAY_SIZE; i++)
 	{
-		// Get the current player ped
-		IVPlayerPed * pPlayerPed = GetPlayerPedFromIndex(i);
+		// Get the current player info
+		IVPlayerInfo * pPlayerInfo = GetPlayerInfoFromIndex(i);
 
-		// Does the current player ped exist?
-		if(pPlayerPed)
+		// Does the current player info exist?
+		if(pPlayerInfo)
 		{
-			// Is the current player peds ped the ped?
-			if(pPlayerPed->m_pPed == pPed)
-				return pPlayerPed;
+			// Is the current player infos player ped the player ped?
+			if(pPlayerInfo->m_pPlayerPed == pPlayerPed)
+				return pPlayerInfo;
 		}
 	}
 
+	// Player info not found for player ped
 	return NULL;
 }
 
-unsigned int CPools::GetIndexFromPlayerPed(IVPlayerPed * pPlayerPed)
+unsigned int CPools::GetIndexFromPlayerInfo(IVPlayerInfo * pPlayerInfo)
 {
-	// Loop through all player ped indexes
-	for(unsigned int i = 0; i < PLAYER_PED_ARRAY_SIZE; i++)
+	// Loop through all player info indexes
+	for(unsigned int i = 0; i < PLAYER_INFO_ARRAY_SIZE; i++)
 	{
-		// Is the current index the player ped?
-		if(GetPlayerPedFromIndex(i) == pPlayerPed)
+		// Is the current index the player info?
+		if(GetPlayerInfoFromIndex(i) == pPlayerInfo)
 			return i;
 	}
 
-	// Player ped not found in array
+	// Player info not found in array
 	return INVALID_PLAYER_PED;
 }
 
-void CPools::SetPlayerPedAtIndex(unsigned int uiIndex, IVPlayerPed * pPlayerPed)
+void CPools::SetPlayerInfoAtIndex(unsigned int uiIndex, IVPlayerInfo * pPlayerInfo)
 {
-	// Is the index more than the player ped array size?
-	if(uiIndex > PLAYER_PED_ARRAY_SIZE)
+	// Is the index more than the player info array size?
+	if(uiIndex > PLAYER_INFO_ARRAY_SIZE)
 		return;
 
-	// Get the player ped pointer array
-	IVPlayerPed ** pPlayerPeds = (IVPlayerPed **)(g_pClient->GetBaseAddress() + VAR_PlayerPedArray);
+	// Get the player info pointer array
+	IVPlayerInfo ** pPlayerInfos = (IVPlayerInfo **)(g_pClient->GetBaseAddress() + VAR_PlayerInfoArray);
 
-	// Set the player ped pointer
-	pPlayerPeds[uiIndex] = pPlayerPed;
+	// Set the player info pointer
+	pPlayerInfos[uiIndex] = pPlayerInfo;
 }
 
-unsigned int CPools::FindFreePlayerPedIndex()
+unsigned int CPools::FindFreePlayerInfoIndex()
 {
-	// Loop through all player ped indexes
-	for(unsigned int i = 0; i < PLAYER_PED_ARRAY_SIZE; i++)
+	// Loop through all player info indexes
+	for(unsigned int i = 0; i < PLAYER_INFO_ARRAY_SIZE; i++)
 	{
 		// Is the current index free?
-		if(!GetPlayerPedFromIndex(i))
+		if(!GetPlayerInfoFromIndex(i))
 			return i;
 	}
 
-	// No free player ped indexes found
+	// No free player info indexes found
 	return INVALID_PLAYER_PED;
 }
 

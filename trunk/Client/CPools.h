@@ -15,9 +15,10 @@
 #define VAR_VehiclePool_7 0x1619240
 #define FUNC_CPool__AtHandle_7 0x426700
 #define FUNC_CPool__HandleOf_7 0x447230
-#define VAR_PlayerPedArray 0x11A7008
+#define FUNC_CPool__Allocate_7 0x96D520
+#define VAR_PlayerInfoArray 0x11A7008
 #define VAR_LocalPlayerId_7 0xF1CC68
-#define PLAYER_PED_ARRAY_SIZE 32
+#define PLAYER_INFO_ARRAY_SIZE 32
 #define INVALID_PLAYER_PED 255
 
 class CPools
@@ -31,12 +32,14 @@ public:
 	static unsigned int  GetHandleFromVehicle(DWORD dwVehicle);
 	static DWORD         GetVehicleFromHandle(unsigned int uiHandle);
 
-	// Player Peds (An array not a pool)
-	static IVPlayerPed * GetPlayerPedFromIndex(unsigned int uiIndex);
-	static IVPlayerPed * GetPlayerPedFromPed(IVPed * pPed);
-	static unsigned int  GetIndexFromPlayerPed(IVPlayerPed * pPlayerPed);
-	static void          SetPlayerPedAtIndex(unsigned int uiIndex, IVPlayerPed * pPlayerPed);
-	static unsigned int  FindFreePlayerPedIndex();
+	// Player Infos (An array not a pool)
+	static IVPlayerInfo * GetPlayerInfoFromIndex(unsigned int uiIndex);
+	static IVPlayerInfo * GetPlayerInfoFromPlayerPed(IVPlayerPed * pPlayerPed);
+	static unsigned int  GetIndexFromPlayerInfo(IVPlayerInfo * pPlayerInfo);
+	static void          SetPlayerInfoAtIndex(unsigned int uiIndex, IVPlayerInfo * pPlayerInfo);
+	static unsigned int  FindFreePlayerInfoIndex();
+
+	// Current Player Info (Doesn't really belong here, but it was the only place to put it)
 	static unsigned int  GetLocalPlayerIndex();
 	static void          SetLocalPlayerIndex(unsigned int uiIndex);
 };

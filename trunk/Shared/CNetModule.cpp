@@ -16,7 +16,7 @@ CNetModule::CNetModule()
 
 	// Get the net module path
 	char szPath[MAX_PATH];
-	sprintf(szPath, "%sNet" LIBRARY_EXTENSION, SharedUtility::GetAppPath());
+	sprintf(szPath, "%sNet" DEBUG_SUFFIX LIBRARY_EXTENSION, SharedUtility::GetAppPath());
 
 	// Load the net module
 	if(!m_pLibrary->Load(szPath))

@@ -25,7 +25,7 @@ struct IVEntity
 	WORD m_w2C;				   // 2C-2E
 	WORD m_wModelIndex;		   // 2E-30
 	IVEntity * m_pReferences;  // 30-34
-	DWORD m_pLivery;		   // 34-38 - Not sure about this, all i know is ((ent + 0x34) + 0xD8) = vehicle livery
+	DWORD m_pLivery;		   // 34-38 - Not sure about this, all i know is ((ent + 0x34) + 0xD8) = vehicle livery (P7)
 	DWORD m_pColModel;		   // 38-3C
 	PAD(pad3, 0xC);			   // 3C-48
 	DWORD m_hInterior;		   // 48-4C

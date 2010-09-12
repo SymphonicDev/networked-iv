@@ -9,6 +9,8 @@
 
 #include <StdInc.h>
 
+#define MODEL_PLAYER 0x6F0783F5
+
 extern CClient * g_pClient;
 extern CGame *   g_pGame;
 
@@ -21,21 +23,21 @@ CPlayer::CPlayer(bool bLocalPlayer)
 		m_uiPlayerIndex = 0;
 
 		// Create the player ped instance with the local player ped pointer
-		m_pPlayerPed = new CIVPlayerPed(CPools::GetPlayerPedFromIndex(0));
+		m_pPlayerPed = new CIVPlayerPed(CPools::GetPlayerInfoFromIndex(0)->m_pPlayerPed);
 
 		// Set the model hash to the default player model hash
-		m_dwModelHash = 0x6F0783F5; // MODEL_PLAYER
+		m_dwModelHash = MODEL_PLAYER;
 	}
 	else
 	{
 		// Find a free player ped index
-		m_uiPlayerIndex = CPools::FindFreePlayerPedIndex();
+		m_uiPlayerIndex = CPools::FindFreePlayerInfoIndex();
 
 		// Set the player ped instance to NULL
 		m_pPlayerPed = NULL;
 
 		// Set the model hash to the default player model hash
-		m_dwModelHash = 0x6F0783F5; // MODEL_PLAYER
+		m_dwModelHash = MODEL_PLAYER;
 	}
 }
 
@@ -128,6 +130,24 @@ bool CPlayer::Create()
 			InvokeNative<void *>(0x46B5523B, uiCharHandle, 40.114815f); // SET_CHAR_HEADING
 		}
 #endif
+		// .text:0096D870 NewPlayerPed (P7)
+		DWORD dwPedPool = (g_pClient->GetBaseAddress() + VAR_PedPool_7);
+		DWORD dwFunc1 = (g_pClient->GetBaseAddress() + FUNC_CPool__Allocate_7);
+		DWORD dwFunc2 = (g_pClient->GetBaseAddress() + 0x9C1910); // CPlayerPed::CPlayerPed
+		DWORD dwPlayerPed = NULL;
+		unsigned int uiPlayerIndex = m_uiPlayerIndex;
+		_asm
+		{
+			mov ecx, dwPedPool
+			call dwFunc1
+			mov dwPlayerPed, eax
+			push uiPlayerIndex
+			push 0 ; might need to be 1
+			push 1 ; if above is changed to 1 change to 0
+			mov ecx, dwPlayerPed
+			call dwFunc2
+			add esp, 0Ch
+		}
 		int iModelIndex = g_pGame->LoadModel(m_dwModelHash);
 
 		// Invalid model
@@ -175,7 +195,7 @@ bool CPlayer::Create()
 		v17 = *(int (__thiscall **)(CIVPed *, DWORD, DWORD))(*(DWORD *)pPlayerPed + 0xF4); // done
 		v17(pPlayerPed, 200, 0); // done // param 2 used to be 0
 
-		m_pPlayerPed = new CIVPlayerPed(CPools::GetPlayerPedFromIndex(m_uiPlayerIndex));
+		m_pPlayerPed = new CIVPlayerPed(CPools::GetPlayerInfoFromIndex(m_uiPlayerIndex)->m_pPlayerPed);
 
 		// Testing code
 		unsigned int uiCharHandle;
@@ -195,31 +215,34 @@ void CPlayer::Destroy()
 	if(IsSpawned())
 	{
 		CLogFile::Printf("CPlayer::Destroy 1");
-		// Remove the ped from the world
+		// Remove the player ped from the world
 		m_pPlayerPed->RemoveFromWorld();
 		CLogFile::Printf("CPlayer::Destroy 2");
 
 		// Delete the player ped
 		DWORD dwFunc = (g_pClient->GetBaseAddress() + 0x9C2260); // CPlayerPed::~CPlayerPed
 		CLogFile::Printf("CPlayer::Destroy 3");
-		IVPed * pPlayerPed = m_pPlayerPed->GetPed();
+		IVPlayerPed * pPlayerPed = m_pPlayerPed->GetPlayerPed();
 		CLogFile::Printf("CPlayer::Destroy 4");
 		_asm
 		{
 			push 1
 			mov ecx, pPlayerPed
 			call dwFunc
+			add esp, 4
 		}
 		CLogFile::Printf("CPlayer::Destroy 5");
 
-		// Delete the players ped
-		InvokeNative<void *>(0x0E3B49BF, CPools::GetHandleFromPed(pPlayerPed)); // DELETE_CHAR
+		// need to remove the player ped from the pool too (i think player ped destructor does that for us)?
 
-		CLogFile::Printf("CPlayer::Destroy 6666");
+		// Delete the players ped
+		//InvokeNative<void *>(0x0E3B49BF, CPools::GetHandleFromPed(pPlayerPed)); // DELETE_CHAR
+
+		//CLogFile::Printf("CPlayer::Destroy 6666");
 
 		// Set the player ped pointer in the array to NULL
-		CPools::SetPlayerPedAtIndex(m_uiPlayerIndex, NULL);
-		CLogFile::Printf("CPlayer::Destroy 6");
+		//CPools::SetPlayerInfoAtIndex(m_uiPlayerIndex, NULL);
+		//CLogFile::Printf("CPlayer::Destroy 6");
 
 		// Delete the player ped
 		//InvokeNative<void *>(0x627A3586, m_uiPlayerIndex); // DELETE_PLAYER

@@ -13,14 +13,14 @@
 
 FILE * CLogFile::m_fLogFile;
 
-void CLogFile::Open(char * szLogFile)
+void CLogFile::Open(char * szLogFile, bool bAppend)
 {
 	// Get the log file path
 	char szPath[MAX_PATH];
 	sprintf(szPath, "%s%s", SharedUtility::GetAppPath(), szLogFile);
 
 	// Open the log file
-	m_fLogFile = fopen(szPath, "w");
+	m_fLogFile = fopen(szPath, bAppend ? "a" : "w");
 
 	// Did the log file open successfully?
 	if(m_fLogFile)
@@ -46,7 +46,7 @@ void CLogFile::Printf(const char * szFormat, ...)
 	if(m_fLogFile)
 	{
 		// Log the message
-		fprintf(m_fLogFile, "%s\n", szBuffer);
+		fprintf(m_fLogFile, "[%s] %s\n", SharedUtility::GetTime(), szBuffer);
 
 		// Flush the log file
 		fflush(m_fLogFile);

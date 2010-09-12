@@ -11,6 +11,12 @@
 
 #include <StdInc.h>
 
+#ifdef _DEBUG
+#define DEBUG_SUFFIX "_d"
+#else
+#define DEBUG_SUFFIX
+#endif
+
 namespace SharedUtility
 {
 // Strip a path back to the last '\' ('/')
@@ -39,4 +45,12 @@ bool WriteRegistryString(HKEY hKeyLocation, const char * szSubKey, const char * 
 // Convert an Ansi string to a Unicode string
 int AnsiToUnicode(char * szAnsiString, size_t sAnsiStringLength, wchar_t * wszUnicodeString, size_t sUnicodeStringLength, DWORD dwFlags = NULL);
 #endif
+
+// Returns the current time and date in the
+// format 'DOW MO DY HR:MN:SC YR'
+const char * GetTimeAndDate();
+
+// Returns the current time in the format
+// 'HR:MN:SC'
+const char * GetTime();
 };

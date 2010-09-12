@@ -272,24 +272,24 @@ void CLauncherDialog::OnBnClickedOk()
 	// Save the edit box values
 	SaveInfo();
 
-	// Get the full path of Client.dll
+	// Get the full path of the client dll
 	char szLibraryPath[MAX_PATH];
-	sprintf(szLibraryPath, "%sClient.dll", SharedUtility::GetAppPath());
+	sprintf(szLibraryPath, "%sClient" DEBUG_SUFFIX ".dll", SharedUtility::GetAppPath());
 
-	// Check if Client.dll exists
+	// Check if the client dll exists
 	if(FindFirstFile(szLibraryPath, &fdFileInfo) == INVALID_HANDLE_VALUE)
 	{
-		ShowMessageBox("Failed to find Client.dll. Cannot launch Networked: IV.");
+		ShowMessageBox("Failed to find Client" DEBUG_SUFFIX ".dll. Cannot launch Networked: IV.");
 		return;
 	}
 
-	// Get the full path of LauncherLibrary.dll
-	sprintf(szLibraryPath, "%sLauncherLibrary.dll", SharedUtility::GetAppPath());
+	// Get the full path of the launcher library dll
+	sprintf(szLibraryPath, "%sLauncherLibrary" DEBUG_SUFFIX ".dll", SharedUtility::GetAppPath());
 
-	// Check if Launcher.dll exists
+	// Check if the launcher library exists
 	if(FindFirstFile(szLibraryPath, &fdFileInfo) == INVALID_HANDLE_VALUE)
 	{
-		ShowMessageBox("Failed to find LauncherLibrary.dll. Cannot launch Networked: IV.");
+		ShowMessageBox("Failed to find LauncherLibrary" DEBUG_SUFFIX ".dll. Cannot launch Networked: IV.");
 		return;
 	}
 

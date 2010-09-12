@@ -50,15 +50,15 @@ struct IVPed
 	DWORD m_pPedBase;				// 21C-220
 	PAD(pad1, 0x4);					// 220-224
 	DWORD * m_pPedIntelligence;		// 224-228
-	// 228
-	PAD(pad2, 0x44);				// 228-26C
+	PAD(pad2, 0x4);					// 228-22C // CPlayerInfo pointer?
+	PAD(pad3, 0x40);				// 22C-26C
 	BYTE m_byteUnknown;				// 26C-26D - Bits 4: in vehicle
 	// 3A8 - Targetted Entity (IVEntity *)
 	// A70 - Ped Type (BYTE)
 	// 2C8 - Weapon Slot (DWORD) (Could be like SA's)
-	PAD(pad3, 0x8D3);				// 26D-B40
+	PAD(pad4, 0x8D3);				// 26D-B40
 	IVVehicle * m_pCurrentVehicle;	// B40-B44
-	PAD(pad4, 0x3BC);				// B44-F00
+	PAD(pad5, 0x3BC);				// B44-F00
 };
 
 class CIVPed : public CIVPhysical
