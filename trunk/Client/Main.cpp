@@ -25,14 +25,11 @@ BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, void *)
 
 			// If the client instance was created call the client OnLoad function, if
 			// it wasn't, exit
-			if(g_pClient)
+			if(!g_pClient || !g_pClient->OnLoad())
 			{
-				// If CClient::OnLoad returns false, something bad happened, so exit
-				if(!g_pClient->OnLoad())
-					ExitProcess(0);
-			}
-			else
+				// Something bad happened, exit
 				ExitProcess(0);
+			}
 		}
 		break;
 	case DLL_PROCESS_DETACH:
