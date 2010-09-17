@@ -14,6 +14,9 @@
 // Mod name
 #define MOD_NAME "Networked: IV"
 
+// Network module version
+#define NETWORK_MODULE_VERSION 0x1
+
 // Network version
 #define NETWORK_VERSION 0x1
 

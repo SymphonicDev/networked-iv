@@ -11,7 +11,7 @@
 
 #include <StdInc.h>
 
-typedef BYTE                     (* GetNetworkVersion_t)();
+typedef bool                     (* VerifyVersion_t)(BYTE byteVersion);
 typedef CRakServerInterface *    (* GetRakServerInterface_t)();
 typedef void                     (* DestroyRakServerInterface_t)(CRakServerInterface * pRakServer);
 typedef CRakClientInterface *    (* GetRakClientInterface_t)();
@@ -25,12 +25,20 @@ class CNetModule
 {
 private:
 	CLibrary * m_pLibrary;
+	GetRakServerInterface_t m_pfnGetRakServerInterface;
+	DestroyRakServerInterface_t m_pfnDestroyRakServerInterface;
+	GetRakClientInterface_t m_pfnGetRakClientInterface;
+	DestroyRakClientInterface_t m_pfnDestroyRakClientInterface;
+	GetBitStreamInterface1_t m_pfnGetBitStreamInterface1;
+	GetBitStreamInterface2_t m_pfnGetBitStreamInterface2;
+	GetBitStreamInterface3_t m_pfnGetBitStreamInterface3;
+	DestroyBitStreamInterface_t m_pfnDestroyBitStreamInterface;
 
 public:
 	CNetModule();
 	~CNetModule();
 
-	BYTE                     GetNetworkVersion();
+	bool                     VerifyVersion(BYTE byteVersion);
 	CRakServerInterface *    GetRakServerInterface();
 	void                     DestroyRakServerInterface(CRakServerInterface * pRakServer);
 	CRakClientInterface *    GetRakClientInterface();

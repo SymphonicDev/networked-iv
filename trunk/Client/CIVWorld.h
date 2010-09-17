@@ -17,6 +17,6 @@
 class CIVWorld
 {
 public:
-	static void Add(IVEntity * pEntity, BOOL bUnknown = FALSE);
-	static void Remove(IVEntity * pEntity, BOOL bUnknown = FALSE);
+	static void Add(IVEntity * pEntity, bool bUnknown = false);
+	static void Remove(IVEntity * pEntity, bool bUnknown = false);
 };

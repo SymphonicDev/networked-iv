@@ -50,6 +50,7 @@
 				PrecompiledHeaderThrough="StdInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -125,6 +126,7 @@
 				PrecompiledHeaderThrough="StdInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -275,6 +277,58 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="XML"
+				>
+				<File
+					RelativePath="..\Shared\CXML.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<Filter
+					Name="TinyXML"
+					>
+					<File
+						RelativePath="..\Shared\TinyXML\ticpp.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\TinyXML\tinystr.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\TinyXML\tinyxml.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\TinyXML\tinyxmlerror.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\TinyXML\tinyxmlparser.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Thread"
+				>
+				<File
+					RelativePath="..\Shared\CMutex.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\CThread.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -306,7 +360,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\SharedUtil.h"
+				RelativePath="..\Shared\SharedUtility.h"
 				>
 			</File>
 			<File
@@ -378,6 +432,46 @@
 				</File>
 				<File
 					RelativePath="..\Shared\PacketReliabilites.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="XML"
+				>
+				<File
+					RelativePath="..\Shared\CXML.h"
+					>
+				</File>
+				<Filter
+					Name="TinyXML"
+					>
+					<File
+						RelativePath="..\Shared\TinyXML\ticpp.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\TinyXML\ticpprc.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\TinyXML\tinystr.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\TinyXML\tinyxml.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Thread"
+				>
+				<File
+					RelativePath="..\Shared\CMutex.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\CThread.h"
 					>
 				</File>
 			</Filter>

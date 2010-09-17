@@ -15,20 +15,38 @@ CNetModule::CNetModule()
 	m_pLibrary = new CLibrary();
 
 	// Get the net module path
-	char szPath[MAX_PATH];
-	sprintf(szPath, "%sNet" DEBUG_SUFFIX LIBRARY_EXTENSION, SharedUtility::GetAppPath());
+	String strPath("%sNet" DEBUG_SUFFIX LIBRARY_EXTENSION, SharedUtility::GetAppPath());
 
 	// Load the net module
-	if(!m_pLibrary->Load(szPath))
+	if(!m_pLibrary->Load(strPath.C_String()))
 	{
 		CLogFile::Printf("Failed to load net module");
 		ExitProcess(0);
 	}
 
-	// Verify the net module network version
-	if(GetNetworkVersion() != NETWORK_VERSION)
+	// Verify the net module version
+	if(!VerifyVersion(NETWORK_MODULE_VERSION))
 	{
-		CLogFile::Printf("Invalid net module network version");
+		CLogFile::Printf("Invalid net module version");
+		ExitProcess(0);
+	}
+
+	// Get pointers to the net module functions
+	m_pfnGetRakServerInterface = (GetRakServerInterface_t)m_pLibrary->GetProcedureAddress("GetRakServerInterface");
+	m_pfnDestroyRakServerInterface = (DestroyRakServerInterface_t)m_pLibrary->GetProcedureAddress("DestroyRakServerInterface");
+	m_pfnGetRakClientInterface = (GetRakClientInterface_t)m_pLibrary->GetProcedureAddress("GetRakClientInterface");
+	m_pfnDestroyRakClientInterface = (DestroyRakClientInterface_t)m_pLibrary->GetProcedureAddress("DestroyRakClientInterface");
+	m_pfnGetBitStreamInterface1 = (GetBitStreamInterface1_t)m_pLibrary->GetProcedureAddress("GetBitStreamInterface1");
+	m_pfnGetBitStreamInterface2 = (GetBitStreamInterface2_t)m_pLibrary->GetProcedureAddress("GetBitStreamInterface2");
+	m_pfnGetBitStreamInterface3 = (GetBitStreamInterface3_t)m_pLibrary->GetProcedureAddress("GetBitStreamInterface3");
+	m_pfnDestroyBitStreamInterface = (DestroyBitStreamInterface_t)m_pLibrary->GetProcedureAddress("DestroyBitStreamInterface");
+
+	// Verify the pointers to the net module functions
+	if(!m_pfnGetRakServerInterface || !m_pfnDestroyRakServerInterface || !m_pfnGetRakClientInterface || 
+		!m_pfnDestroyRakClientInterface || !m_pfnGetBitStreamInterface1 || !m_pfnGetBitStreamInterface2 || 
+		!m_pfnGetBitStreamInterface3 || !m_pfnDestroyBitStreamInterface)
+	{
+		CLogFile::Printf("Net module is corrupt");
 		ExitProcess(0);
 	}
 }
@@ -42,32 +60,23 @@ CNetModule::~CNetModule()
 	SAFE_DELETE(m_pLibrary);
 }
 
-BYTE CNetModule::GetNetworkVersion()
+bool CNetModule::VerifyVersion(BYTE byteVersion)
 {
-	// Get a pointer to the GetNetworkVersion function
-	GetNetworkVersion_t pfnGetNetworkVersion = (GetNetworkVersion_t)
-		m_pLibrary->GetProcedureAddress("GetNetworkVersion");
+	// Get a pointer to the VerifyVersion function
+	VerifyVersion_t pfnVerifyVersion = (VerifyVersion_t)m_pLibrary->GetProcedureAddress("VerifyVersion");
 
 	// Is the pointer invalid?
-	if(!pfnGetNetworkVersion)
-		return NULL;
+	if(!pfnVerifyVersion)
+		return false;
 
-	// Call the GetNetworkVersion function and return the result
-	return pfnGetNetworkVersion();
+	// Call the VerifyVersion function and return the result
+	return pfnVerifyVersion(byteVersion);
 }
 
 CRakServerInterface * CNetModule::GetRakServerInterface()
 {
-	// Get a pointer to the GetRakServerInterface function
-	GetRakServerInterface_t pfnGetRakServerInterface = (GetRakServerInterface_t)
-		m_pLibrary->GetProcedureAddress("GetRakServerInterface");
-
-	// Is the pointer invalid?
-	if(!pfnGetRakServerInterface)
-		return NULL;
-
 	// Call the GetRakServerInterface function
-	CRakServerInterface * pRakServer = pfnGetRakServerInterface();
+	CRakServerInterface * pRakServer = m_pfnGetRakServerInterface();
 
 	// Return the RakServer instance
 	return pRakServer;
@@ -75,30 +84,14 @@ CRakServerInterface * CNetModule::GetRakServerInterface()
 
 void CNetModule::DestroyRakServerInterface(CRakServerInterface * pRakServer)
 {
-	// Get a pointer to the DestroyRakServerInterface function
-	DestroyRakServerInterface_t pfnDestroyRakServerInterface = (DestroyRakServerInterface_t)
-		m_pLibrary->GetProcedureAddress("DestroyRakServerInterface");
-
-	// Is the pointer valid?
-	if(pfnDestroyRakServerInterface)
-	{
-		// Call the DestroyRakServerInterface function
-		pfnDestroyRakServerInterface(pRakServer);
-	}
+	// Call the DestroyRakServerInterface function
+	m_pfnDestroyRakServerInterface(pRakServer);
 }
 
 CRakClientInterface * CNetModule::GetRakClientInterface()
 {
-	// Get a pointer to the GetRakClientInterface function
-	GetRakClientInterface_t pfnGetRakClientInterface = (GetRakClientInterface_t)
-		m_pLibrary->GetProcedureAddress("GetRakClientInterface");
-
-	// Is the pointer invalid?
-	if(!pfnGetRakClientInterface)
-		return NULL;
-
 	// Call the GetRakClientInterface function
-	CRakClientInterface * pRakClient = pfnGetRakClientInterface();
+	CRakClientInterface * pRakClient = m_pfnGetRakClientInterface();
 
 	// Return the RakClient instance
 	return pRakClient;
@@ -106,30 +99,14 @@ CRakClientInterface * CNetModule::GetRakClientInterface()
 
 void CNetModule::DestroyRakClientInterface(CRakClientInterface * pRakClient)
 {
-	// Get a pointer to the DestroyRakServerInterface function
-	DestroyRakClientInterface_t pfnDestroyRakClientInterface = (DestroyRakClientInterface_t)
-		m_pLibrary->GetProcedureAddress("DestroyRakClientInterface");
-
-	// Is the pointer valid?
-	if(pfnDestroyRakClientInterface)
-	{
-		// Call the DestroyRakClientInterface function
-		pfnDestroyRakClientInterface(pRakClient);
-	}
+	// Call the DestroyRakClientInterface function
+	m_pfnDestroyRakClientInterface(pRakClient);
 }
 
 CNetBitStreamInterface * CNetModule::GetBitStreamInterface1()
 {
-	// Get a pointer to the GetBitStreamInterface1 function
-	GetBitStreamInterface1_t pfnGetBitStreamInterface1 = (GetBitStreamInterface1_t)
-		m_pLibrary->GetProcedureAddress("GetBitStreamInterface1");
-
-	// Is the pointer invalid?
-	if(!pfnGetBitStreamInterface1)
-		return NULL;
-
 	// Call the GetBitStreamInterface1 function
-	CNetBitStreamInterface * pBitStream = pfnGetBitStreamInterface1();
+	CNetBitStreamInterface * pBitStream = m_pfnGetBitStreamInterface1();
 
 	// Return the BitStream instance
 	return pBitStream;
@@ -137,16 +114,8 @@ CNetBitStreamInterface * CNetModule::GetBitStreamInterface1()
 
 CNetBitStreamInterface * CNetModule::GetBitStreamInterface2(const unsigned int initialBytesToAllocate)
 {
-	// Get a pointer to the GetBitStreamInterface2 function
-	GetBitStreamInterface2_t pfnGetBitStreamInterface2 = (GetBitStreamInterface2_t)
-		m_pLibrary->GetProcedureAddress("GetBitStreamInterface2");
-
-	// Is the pointer invalid?
-	if(!pfnGetBitStreamInterface2)
-		return NULL;
-
 	// Call the GetBitStreamInterface2 function
-	CNetBitStreamInterface * pBitStream = pfnGetBitStreamInterface2(initialBytesToAllocate);
+	CNetBitStreamInterface * pBitStream = m_pfnGetBitStreamInterface2(initialBytesToAllocate);
 
 	// Return the BitStream instance
 	return pBitStream;
@@ -154,16 +123,8 @@ CNetBitStreamInterface * CNetModule::GetBitStreamInterface2(const unsigned int i
 
 CNetBitStreamInterface * CNetModule::GetBitStreamInterface3(unsigned char* _data, const unsigned int lengthInBytes, bool _copyData)
 {
-	// Get a pointer to the GetBitStreamInterface3 function
-	GetBitStreamInterface3_t pfnGetBitStreamInterface3 = (GetBitStreamInterface3_t)
-		m_pLibrary->GetProcedureAddress("GetBitStreamInterface3");
-
-	// Is the pointer invalid?
-	if(!pfnGetBitStreamInterface3)
-		return NULL;
-
 	// Call the GetBitStreamInterface3 function
-	CNetBitStreamInterface * pBitStream = pfnGetBitStreamInterface3(_data, lengthInBytes, _copyData);
+	CNetBitStreamInterface * pBitStream = m_pfnGetBitStreamInterface3(_data, lengthInBytes, _copyData);
 
 	// Return the BitStream instance
 	return pBitStream;
@@ -171,14 +132,6 @@ CNetBitStreamInterface * CNetModule::GetBitStreamInterface3(unsigned char* _data
 
 void CNetModule::DestroyBitStreamInterface(CNetBitStreamInterface * pBitStream)
 {
-	// Get a pointer to the DestroyBitStreamInterface function
-	DestroyBitStreamInterface_t pfnDestroyBitStreamInterface = (DestroyBitStreamInterface_t)
-		m_pLibrary->GetProcedureAddress("DestroyBitStreamInterface");
-
-	// Is the pointer valid?
-	if(pfnDestroyBitStreamInterface)
-	{
-		// Call the DestroyRakClientInterface function
-		pfnDestroyBitStreamInterface(pBitStream);
-	}
+	// Call the DestroyRakClientInterface function
+	m_pfnDestroyBitStreamInterface(pBitStream);
 }

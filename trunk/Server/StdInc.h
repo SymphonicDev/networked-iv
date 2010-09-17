@@ -22,6 +22,7 @@
 #include <map>
 #include <string>
 #include <time.h>
+#include <queue>
 
 // Shared
 #include <Common.h>
@@ -41,8 +42,14 @@
 #include <CLibrary.h>
 #include <CNetModule.h>
 #include <CLogFile.h>
+#include <TinyXML/tinyxml.h>
+#include <TinyXML/ticpp.h>
+#include <CXML.h>
+#include <CMutex.h>
+#include <CThread.h>
 
 // Project
+#include "CConfig.h"
 #include "CServer.h"
 #include "CServerRPCs.h"
 #include "CServerPacketHandler.h"

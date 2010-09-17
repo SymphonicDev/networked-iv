@@ -43,22 +43,31 @@ enum ePedType
 	//PED_TYPE_NETWORK_TEAM_(1-8)
 };
 
+struct IVPedIntelligence
+{
+	PAD(pad0, 0x44);
+	DWORD * m_pPedTaskManager;
+	// TODO: Find size
+};
+
 struct IVPed
 {
-	IVPhysical m_physical;          // 000-210
-	PAD(pad0, 0xC);					// 210-21C
-	DWORD m_pPedBase;				// 21C-220
-	PAD(pad1, 0x4);					// 220-224
-	DWORD * m_pPedIntelligence;		// 224-228
-	PAD(pad2, 0x4);					// 228-22C // CPlayerInfo pointer?
-	PAD(pad3, 0x40);				// 22C-26C
-	BYTE m_byteUnknown;				// 26C-26D - Bits 4: in vehicle
-	// 3A8 - Targetted Entity (IVEntity *)
+	IVPhysical m_physical;					// 000-210
+	PAD(pad0, 0xC);							// 210-21C
+	DWORD m_pPedBase;						// 21C-220
+	PAD(pad1, 0x4);							// 220-224
+	IVPedIntelligence * m_pPedIntelligence;	// 224-228
+	PAD(pad2, 0x4);							// 228-22C // CPlayerInfo pointer?
+	PAD(pad3, 0x40);						// 22C-26C
+	BYTE m_byteUnknown;						// 26C-26D - Bits 4: in vehicle
+	PAD(pad4, 0x5B);						// 26D-2C8
+	DWORD dwWeaponSlot;						// 2C8-2CC (Could be like SA's?)
+	PAD(pad5, 0xDC);                        // 26D-3A8
+	IVEntity * pTargettedEntity;            // 3A8-3AC
 	// A70 - Ped Type (BYTE)
-	// 2C8 - Weapon Slot (DWORD) (Could be like SA's)
-	PAD(pad4, 0x8D3);				// 26D-B40
-	IVVehicle * m_pCurrentVehicle;	// B40-B44
-	PAD(pad5, 0x3BC);				// B44-F00
+	PAD(pad6, 0x794);						// 3AC-B40
+	IVVehicle * m_pCurrentVehicle;			// B40-B44
+	PAD(pad7, 0x3BC);						// B44-F00
 };
 
 class CIVPed : public CIVPhysical

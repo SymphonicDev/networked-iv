@@ -72,3 +72,5 @@
 #include "CClientPacketHandler.h"
 #include "CNetworkManager.h"
 #include "CLocalPlayer.h"
+#include "CNetworkPlayer.h"
+#include "CPlayerManager.h"

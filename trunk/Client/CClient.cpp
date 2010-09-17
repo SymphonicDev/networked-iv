@@ -15,6 +15,7 @@ CDirect3D9Hook *  g_pDirect3D9Hook = NULL;
 CNetModule *      g_pNetModule = NULL;
 CNetworkManager * g_pNetworkManager = NULL;
 CLocalPlayer *    g_pLocalPlayer = NULL;
+CPlayerManager *  g_pPlayerManager = NULL;
 CFont *           g_pFont = NULL;
 CChatWindow *     g_pChatWindow = NULL;
 
@@ -23,57 +24,40 @@ bool CClient::OnLoad()
 	// Open the log file
 	CLogFile::Open("Client.log");
 
-	CLogFile::Printf("1");
-
 	// Reset the port and set the nick limit
 	m_usPort = 0;
-	CLogFile::Printf("2");
 	m_strNick.SetLimit(NICK_MAX);
-	CLogFile::Printf("3");
 
 	// TODO: CCommandLine class
 	// TODO: CCommandLine::Parse
 	// TODO: CCommandLine::GetOption
 	// Process the command line parameters
 	char * szCommandLine = GetCommandLine();
-	CLogFile::Printf("4");
 
 	while(*szCommandLine)
 	{
-		CLogFile::Printf("5");
 		// Is the current char not a space?
 		if(!isspace(*szCommandLine))
 		{
-			CLogFile::Printf("6");
 			// Is the current char a '-'?
 			if(*szCommandLine == '-')
 			{
-				CLogFile::Printf("7");
 				// Collect the option string
 				String strOption;
 
-				CLogFile::Printf("8");
 				while(*szCommandLine && !isspace(*szCommandLine))
 				{
-					CLogFile::Printf("9");
 					strOption += *szCommandLine;
-					CLogFile::Printf("10");
 					szCommandLine++;
-					CLogFile::Printf("11");
 				}
-				CLogFile::Printf("12");
 
 				// If we have run out of command line to process break out of the loop
 				if(!(*szCommandLine))
 					break;
 
-				CLogFile::Printf("13");
-
 				// Skip the spaces between the option and the value
 				while(*szCommandLine && isspace(*szCommandLine))
 					szCommandLine++;
-
-				CLogFile::Printf("14");
 
 				// If we have run out of command line to process break out of the loop
 				if(!(*szCommandLine))
@@ -198,6 +182,9 @@ void CClient::OnUnload()
 
 	// Delete the font instance
 	SAFE_DELETE(g_pFont);
+
+	// Delete the player manager instance
+	SAFE_DELETE(g_pPlayerManager);
 
 	// Delete the local player instance
 	SAFE_DELETE(g_pLocalPlayer);
@@ -350,6 +337,11 @@ void CClient::OnGameLoad()
 	g_pLocalPlayer = new CLocalPlayer();
 
 	CLogFile::Printf("local player instance created");
+
+	// Create the player manager instance
+	g_pPlayerManager = new CPlayerManager();
+
+	CLogFile::Printf("player manager instance created");
 
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Game loaded!");
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Starting network manager...");

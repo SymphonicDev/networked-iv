@@ -21,7 +21,8 @@ struct IVPhysical
 	IVDynamicEntity m_dynamicEntity; // 000-10C
 	// 13C - In Water (BYTE)?
 	PAD(pad0, 0xD8);				 // 10C-1E4
-	IVEntity * m_pLastDamageEntity; // 1E4-1E8
+	IVEntity * m_pLastDamageEntity;  // 1E4-1E8
+	// 1F0 = Health?
 	PAD(pad1, 0xC);					 // 1E8-1F4
 	PAD(pad2, 0x1C);				 // 1F4-210
 };
@@ -39,5 +40,5 @@ public:
 	void         SetTurnSpeed(Vector3 * vecTurnSpeed);
 	void         GetTurnSpeed(Vector3 * vecTurnSpeed);
 	void         SetLastDamageEntity(IVEntity * pLastDamageEntity);
-	IVEntity *  GetLastDamageEntity();
+	IVEntity *   GetLastDamageEntity();
 };

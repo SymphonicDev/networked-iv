@@ -10,7 +10,7 @@
 
 #include <StdInc.h>
 
-typedef void (_cdecl * NativeFunction_t)(scrNativeCallContext * cxt);
+typedef void (_cdecl * NativeFunction_t)(scrNativeCallContext * pContext);
 
 extern CClient * g_pClient;
 
@@ -21,11 +21,11 @@ void InvokeNativeInternal(unsigned int uHash, NativeContext * pContext)
 	_asm
 	{
 		xor eax, eax
-			push esi
-			mov esi, uHash
-			call dwFunction
-			pop esi
-			mov dwNativeAddress, eax
+		push esi
+		mov esi, uHash
+		call dwFunction
+		pop esi
+		mov dwNativeAddress, eax
 	}
 
 	if(dwNativeAddress)

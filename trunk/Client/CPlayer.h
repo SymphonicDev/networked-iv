@@ -11,8 +11,6 @@
 
 #include <StdInc.h>
 
-#define FUNC_DeletePlayer 0x81B960
-
 class CPlayer
 {
 private:

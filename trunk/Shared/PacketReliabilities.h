@@ -2,7 +2,6 @@
 //
 // File: PacketReliabilities.h
 // Project: Shared
-// Author(s): jenksta
 // License: See LICENSE in root directory
 //
 //==========================================================================

@@ -101,11 +101,27 @@ public:
 
 
 	const char *  SubStr(size_t sOffset, size_t sCount) const;
+
+	// Append szString to the string
 	void          Append(const char * szString);
+
+	// Append ucChar to the string
 	void          Append(const unsigned char ucChar);
+
+	// Insert szString into the string at sOffset
 	void          Insert(size_t sOffset, const char * szString);
+
+	// Attempt to find szString in the string, 
+	// if found return its index, if not return -1
 	size_t        Find(const char * szString) const;
+
+	// Return true if the string contains szString, 
+	// false if not
 	bool          Contains(const char * szString) const;
+
+	// Starting at the end, attempt to find szString 
+	// in the string, if found return its index, if 
+	// not return -1
 	size_t        ReverseFind(const char * szString) const;
 
 	// Set the string limit

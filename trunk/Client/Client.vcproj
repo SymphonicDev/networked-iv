@@ -50,6 +50,7 @@
 				PrecompiledHeaderThrough="StdInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996;4409"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -127,6 +128,7 @@
 				PrecompiledHeaderThrough="StdInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996;4409"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -363,11 +365,23 @@
 					>
 				</File>
 				<File
+					RelativePath=".\CNetworkPlayer.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\CNetworkVehicle.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\CPlayer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CPlayerManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\CPlayerManager.h"
 					>
 				</File>
 				<File
@@ -414,7 +428,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\SharedUtil.h"
+				RelativePath="..\Shared\SharedUtility.h"
 				>
 			</File>
 			<File
@@ -546,6 +560,10 @@
 				</File>
 				<File
 					RelativePath=".\CNetworkManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\CNetworkPlayer.h"
 					>
 				</File>
 				<File

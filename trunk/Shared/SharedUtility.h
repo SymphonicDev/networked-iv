@@ -17,6 +17,8 @@
 #define DEBUG_SUFFIX
 #endif
 
+#define atob(str) (atoi(str) != 0)
+
 namespace SharedUtility
 {
 // Strip a path back to the last '\' ('/')

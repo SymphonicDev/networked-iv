@@ -64,6 +64,7 @@ void CNetworkManager::Process()
 {
 	CPacket * pPacket;
 
+	// Loop until we have processed all packets in the packet queue (if any)
 	while(pPacket = m_pRakClient->Receive())
 	{
 		// Pass it to the rpc handler
@@ -78,6 +79,7 @@ void CNetworkManager::Process()
 			}
 		}
 
+		// Deallocate the packet memory used
 		m_pRakClient->DeallocatePacket(pPacket);
 	}
 }

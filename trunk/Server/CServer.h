@@ -14,18 +14,25 @@
 class CServer
 {
 private:
-	bool  m_bActive;
-	DWORD m_dwLastFPSUpdateTickCount;
-	DWORD m_dwFrameCount;
-	DWORD m_dwFramesPerSecond;
+	bool               m_bActive;
+	bool               m_bShowFPS;
+	DWORD              m_dwLastFPSUpdateTickCount;
+	DWORD              m_dwFrameCount;
+	DWORD              m_dwFramesPerSecond;
+	CMutex             m_inputQueueMutex; // Mutex for m_inputQueue
+	std::queue<String> m_inputQueue;
+
+	void        ProcessInputQueue();
 
 public:
 	CServer();
 	~CServer();
 
-	void        OnLoad();
+	bool        OnLoad();
 	void        Process();
 	void        OnUnload();
 	bool        IsActive();
 	void        SetTitle(String strTitle);
+	void        OnCloseEvent();
+	void        AddToInputQueue(String strString);
 };

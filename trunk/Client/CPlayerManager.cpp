@@ -1,7 +1,7 @@
 //============== Networked: IV - http://code.networked-iv.com ==============
 //
 // File: CPlayerManager.cpp
-// Project: Server
+// Project: Client
 // Author(s): jenksta
 // License: See LICENSE in root directory
 //
@@ -11,20 +11,24 @@
 
 CPlayerManager::CPlayerManager()
 {
-	for(EntityId playerId = 0; playerId < PLAYER_MAX; playerId++)
-		m_pPlayers[playerId] = NULL;
+	// Loop through all network player pointers
+	for(EntityId i = 0; i < PLAYER_MAX; i++)
+	{
+		// Set this network player pointer to NULL
+		m_pNetworkPlayers[i] = NULL;
+	}
 }
 
 CPlayerManager::~CPlayerManager()
 {
-	// Loop through all players
+	// Loop through all network player pointers
 	for(EntityId i = 0; i < PLAYER_MAX; i++)
 	{
-		// Is the current player active?
-		if(IsActive(i))
+		// Is this network player pointer valid?
+		if(m_pNetworkPlayers[i])
 		{
-			// Delete the current player
-			Delete(i);
+			// Delete this network player
+			SAFE_DELETE(m_pNetworkPlayers[i]);
 		}
 	}
 }
@@ -35,15 +39,12 @@ bool CPlayerManager::Add(EntityId playerId, String strName)
 	if(IsActive(playerId))
 		return false;
 
-	// Create the player instance
-	m_pPlayers[playerId] = new CPlayer(playerId, strName);
+	// Create the network player instance
+	m_pNetworkPlayers[playerId] = new CNetworkPlayer(playerId, strName);
 
-	// Was the player instance created?
-	if(m_pPlayers[playerId])
+	// Was the network player instance created?
+	if(m_pNetworkPlayers[playerId])
 	{
-		// Add the player for everyone
-		m_pPlayers[playerId]->AddForWorld();
-
 		return true;
 	}
 
@@ -56,14 +57,11 @@ bool CPlayerManager::Delete(EntityId playerId)
 	if(!IsActive(playerId))
 		return false;
 
-	// Delete the player for everyone
-	m_pPlayers[playerId]->DeleteForWorld();
-
-	// Delete the player instance
-	delete m_pPlayers[playerId];
+	// Delete the network player instance
+	delete m_pNetworkPlayers[playerId];
 
 	// Set the player pointer to NULL
-	m_pPlayers[playerId] = NULL;
+	m_pNetworkPlayers[playerId] = NULL;
 
 	return true;
 }
@@ -74,16 +72,16 @@ bool CPlayerManager::IsActive(EntityId playerId)
 	if(playerId >= PLAYER_MAX)
 		return false;
 
-	return (m_pPlayers[playerId] != NULL);
+	return (m_pNetworkPlayers[playerId] != NULL);
 }
 
-CPlayer * CPlayerManager::Get(EntityId playerId)
+CNetworkPlayer * CPlayerManager::Get(EntityId playerId)
 {
 	// Is this player not active?
 	if(!IsActive(playerId))
 		return NULL;
 
-	return m_pPlayers[playerId];
+	return m_pNetworkPlayers[playerId];
 }
 
 EntityId CPlayerManager::GetCount()
@@ -102,25 +100,4 @@ EntityId CPlayerManager::GetCount()
 	}
 
 	return count;
-}
-
-void CPlayerManager::HandlePlayerJoin(EntityId playerId)
-{
-	// Loop through all players
-	for(EntityId i = 0; i < PLAYER_MAX; i++)
-	{
-		// Is the current player not this player and active?
-		if(i != playerId && IsActive(i))
-		{
-			// Add the current player for this player
-			m_pPlayers[i]->AddForPlayer(playerId);
-
-			// Is the current player spawned?
-			if(m_pPlayers[i]->IsSpawned())
-			{
-				// Spawn the current player for this player
-				m_pPlayers[i]->SpawnForPlayer(playerId);
-			}
-		}
-	}
 }

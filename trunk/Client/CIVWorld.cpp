@@ -11,7 +11,7 @@
 
 extern CClient * g_pClient;
 
-void CIVWorld::Add(IVEntity * pEntity, BOOL bUnknown)
+void CIVWorld::Add(IVEntity * pEntity, bool bUnknown)
 {
 	DWORD dwFunc = (g_pClient->GetBaseAddress() + FUNC_CWorld__Add_7);
 	_asm
@@ -23,7 +23,7 @@ void CIVWorld::Add(IVEntity * pEntity, BOOL bUnknown)
 	}
 }
 
-void CIVWorld::Remove(IVEntity * pEntity, BOOL bUnknown)
+void CIVWorld::Remove(IVEntity * pEntity, bool bUnknown)
 {
 	DWORD dwFunc = (g_pClient->GetBaseAddress() + FUNC_CWorld__Remove_7);
 	_asm
