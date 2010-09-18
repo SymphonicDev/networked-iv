@@ -12,7 +12,7 @@
 
 CXML::CXML()
 {
-
+	m_node = NULL;
 }
 
 CXML::~CXML()
@@ -22,6 +22,8 @@ CXML::~CXML()
 
 bool CXML::load(String strFileName)
 {
+	m_node = NULL;
+
 	if(!m_document.LoadFile(strFileName.C_String()))
 	{
 		return false;
@@ -44,7 +46,7 @@ void CXML::setTabSize(int size)
 
 const char * CXML::getAttribute(const char * attributeName)
 {
-	if(!isComment())
+	if(m_node && !isComment())
 	{
 		return m_node->Attribute(attributeName);
 	}
@@ -54,7 +56,7 @@ const char * CXML::getAttribute(const char * attributeName)
 
 void CXML::removeAttribute(const char * attributeName)
 {
-	if(!isComment())
+	if(m_node && !isComment())
 	{
 		m_node->RemoveAttribute(attributeName);
 	}
@@ -62,7 +64,7 @@ void CXML::removeAttribute(const char * attributeName)
 
 void CXML::setAttribute(const char * attributeName, const char * value)
 {
-	if(!isComment())
+	if(m_node && !isComment())
 	{
 		m_node->SetAttribute(attributeName, value);
 	}
@@ -70,17 +72,25 @@ void CXML::setAttribute(const char * attributeName, const char * value)
 
 const char * CXML::nodeName()
 {
-	return m_node->Value();
+	if(m_node)
+	{
+		return m_node->Value();
+	}
+
+	return NULL;
 }
 
 void CXML::nodeSetName(const char * content)
 {
-	m_node->SetValue(content);
+	if(m_node)
+	{
+		m_node->SetValue(content);
+	}
 }
 
 const char * CXML::nodeContent()
 {
-	if(!isComment())
+	if(m_node && !isComment())
 	{
 		return m_node->GetText();
 	}
@@ -90,10 +100,13 @@ const char * CXML::nodeContent()
 
 void CXML::nodeSetContent(const char * content)
 {
-	m_node->Clear();
-	// This could cause leaks?
-	TiXmlText * newNode = new TiXmlText(content);
-	m_node->LinkEndChild(newNode);
+	if(m_node)
+	{
+		m_node->Clear();
+		// This could cause leaks?
+		TiXmlText * newNode = new TiXmlText(content);
+		m_node->LinkEndChild(newNode);
+	}
 }
 
 void CXML::nodeToRoot()
@@ -103,7 +116,7 @@ void CXML::nodeToRoot()
 
 bool CXML::findNode(const char * name)
 {
-	if(m_node->FirstChild(name) != 0)
+	if(m_node && m_node->FirstChild(name) != 0)
 	{
 		m_node = m_node->FirstChild(name)->ToElement();
 		return true;
@@ -114,7 +127,7 @@ bool CXML::findNode(const char * name)
 
 bool CXML::nextNode()
 {
-	if(m_node->NextSibling() != 0)
+	if(m_node && m_node->NextSibling() != 0)
 	{
 		m_node = m_node->NextSibling()->ToElement();
 		return true;
@@ -125,7 +138,7 @@ bool CXML::nextNode()
 
 bool CXML::previousNode()
 {
-	if(m_node->PreviousSibling() != 0)
+	if(m_node && m_node->PreviousSibling() != 0)
 	{
 		m_node = m_node->PreviousSibling()->ToElement();
 		return true;
@@ -136,7 +149,7 @@ bool CXML::previousNode()
 
 bool CXML::childNodeFirst()
 {
-	if(m_node->FirstChild() != 0)
+	if(m_node && m_node->FirstChild() != 0)
 	{
 		m_node = m_node->FirstChild()->ToElement();
 		return true;
@@ -147,7 +160,7 @@ bool CXML::childNodeFirst()
 
 void CXML::nodeParent()
 {
-	if(m_node->Parent())
+	if(m_node && m_node->Parent())
 	{
 		m_node = m_node->Parent()->ToElement();
 	}
@@ -155,7 +168,10 @@ void CXML::nodeParent()
 
 void CXML::nodeClear()
 {
-	m_node->Clear();
+	if(m_node)
+	{
+		m_node->Clear();
+	}
 }
 
 void CXML::newNode(const char * name, bool nodePointerToNewNode)
@@ -168,16 +184,22 @@ void CXML::newNode(const char * name, bool nodePointerToNewNode)
 	}
 	else
 	{
-		// This could cause leaks?
-		TiXmlElement * newNode = new TiXmlElement(name);
-		m_node->LinkEndChild(newNode);
+		if(m_node)
+		{
+			// This could cause leaks?
+			TiXmlElement * newNode = new TiXmlElement(name);
+			m_node->LinkEndChild(newNode);
+		}
 	}
 }
 
 void CXML::newComment(const char * comment)
 {
-	TiXmlComment * newComment = new TiXmlComment(comment);
-	m_node->LinkEndChild(newComment);
+	if(m_node)
+	{
+		TiXmlComment * newComment = new TiXmlComment(comment);
+		m_node->LinkEndChild(newComment);
+	}
 }
 
 const char * CXML::lastError(int * iErrorRow, int * iErrorCol)
@@ -202,7 +224,7 @@ const char * CXML::lastError(int * iErrorRow, int * iErrorCol)
 
 bool CXML::isComment()
 {
-	if(m_node->Type() == TiXmlNode::COMMENT)
+	if(m_node && m_node->Type() == TiXmlNode::COMMENT)
 	{
 		return true;
 	}

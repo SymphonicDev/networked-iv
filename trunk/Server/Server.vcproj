@@ -431,7 +431,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\PacketReliabilites.h"
+					RelativePath="..\Shared\PacketReliabilities.h"
 					>
 				</File>
 			</Filter>
