@@ -15,6 +15,8 @@ class CServerRPCs
 {
 private:
 	static void InitialData(CBitStreamInterface * pBitStream, EntityId playerId);
+	static void ChatInput(CBitStreamInterface * pBitStream, EntityId playerId);
+
 public:
 	static void Register(CRPCHandler * pRPCHandler);
 	static void Unregister(CRPCHandler * pRPCHandler);

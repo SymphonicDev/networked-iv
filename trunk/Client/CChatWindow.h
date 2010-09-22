@@ -11,7 +11,7 @@
 
 #include <StdInc.h>
 
-#define NUM_CHAT_PAGES 5
+#define NUM_CHAT_PAGES 10
 #define NUM_CHAT_LINES_PER_PAGE 10
 #define NUM_CHAT_LINES (NUM_CHAT_PAGES * NUM_CHAT_LINES_PER_PAGE)
 #define MESSAGE_INFO_COLOR D3DCOLOR_RGBA(0, 0, 255, 255)
@@ -41,5 +41,7 @@ public:
 	void EnableInput();
 	void DisableInput();
 	bool IsInputEnabled();
-	bool HandleInput(unsigned int uMsg, DWORD dwChar);
+	bool CapInputBuffer(size_t sOffset);
+	void ProcessInput();
+	bool HandleUserInput(unsigned int uMsg, DWORD dwChar);
 };

@@ -245,14 +245,6 @@
 				Name="Net"
 				>
 				<File
-					RelativePath="..\Shared\CBitStream.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\CNetModule.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\CNetworkManager.cpp"
 					>
 				</File>
@@ -265,10 +257,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\CRPCHandler.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\CServerPacketHandler.cpp"
 					>
 				</File>
@@ -276,6 +264,22 @@
 					RelativePath=".\CServerRPCs.cpp"
 					>
 				</File>
+				<Filter
+					Name="Shared"
+					>
+					<File
+						RelativePath="..\Shared\CBitStream.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CNetModule.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CRPCHandler.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="XML"
@@ -371,22 +375,6 @@
 				Name="Net"
 				>
 				<File
-					RelativePath="..\Shared\CBitStream.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\CBitStreamInterface.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\CNetBitStreamInterface.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\CNetModule.h"
-					>
-				</File>
-				<File
 					RelativePath=".\CNetworkManager.h"
 					>
 				</File>
@@ -403,18 +391,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\CRakClientInterface.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\CRakServerInterface.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\CRPCHandler.h"
-					>
-				</File>
-				<File
 					RelativePath=".\CServerPacketHandler.h"
 					>
 				</File>
@@ -422,18 +398,46 @@
 					RelativePath=".\CServerRPCs.h"
 					>
 				</File>
-				<File
-					RelativePath="..\Shared\PacketIdentifiers.h"
+				<Filter
+					Name="Shared"
 					>
-				</File>
-				<File
-					RelativePath="..\Shared\PacketPriorities.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\PacketReliabilities.h"
-					>
-				</File>
+					<File
+						RelativePath="..\Shared\CBitStream.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CBitStreamInterface.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CNetBitStreamInterface.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CNetModule.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CRakServerInterface.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CRPCHandler.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\PacketIdentifiers.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\PacketPriorities.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\PacketReliabilities.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="XML"

@@ -109,7 +109,6 @@ public:
 	// Returns the number of unread bits left in the BitStream.
 	unsigned int             GetNumberOfUnreadBits();
 
-	// TODO: Move the actual method to CNetBitStream
 	// Write a String to the BitStream.
 	void                     Write(const String &inString);
 

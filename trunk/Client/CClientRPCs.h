@@ -19,6 +19,7 @@ private:
 	static void DeletePlayer(CBitStreamInterface * pBitStream, EntityId playerId);
 	static void SpawnPlayer(CBitStreamInterface * pBitStream, EntityId playerId);
 	static void DestroyPlayer(CBitStreamInterface * pBitStream, EntityId playerId);
+	static void ChatInput(CBitStreamInterface * pBitStream, EntityId playerId);
 
 public:
 	static void Register(CRPCHandler * pRPCHandler);

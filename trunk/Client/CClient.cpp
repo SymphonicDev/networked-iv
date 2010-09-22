@@ -273,11 +273,11 @@ void CClient::OnD3DEndScene(IDirect3DDevice9 * pD3DDevice)
 		}
 		else
 		{
-			CLogFile::Printf("Destroying player (%d, 0x%p, 0x%p)...", CPools::GetLocalPlayerIndex(), CPools::GetPlayerInfoFromIndex(1), CPools::GetPlayerInfoFromIndex(0));
+			CLogFile::Printf("Destroying player...");
 			pPlayer->Destroy();
-			CLogFile::Printf("Player destroyed (%d, 0x%p, 0x%p)!", CPools::GetLocalPlayerIndex(), CPools::GetPlayerInfoFromIndex(1), CPools::GetPlayerInfoFromIndex(0));
+			CLogFile::Printf("Player destroyed!");
 			delete pPlayer;
-			CLogFile::Printf("Player deleted (%d, 0x%p, 0x%p)!", CPools::GetLocalPlayerIndex(), CPools::GetPlayerInfoFromIndex(1), CPools::GetPlayerInfoFromIndex(0));
+			CLogFile::Printf("Player deleted!");
 		}
 
 		bCreatePlayer = !bCreatePlayer;

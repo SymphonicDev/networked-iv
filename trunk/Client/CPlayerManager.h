@@ -15,6 +15,7 @@ class CPlayerManager
 {
 private:
 	CNetworkPlayer * m_pNetworkPlayers[PLAYER_MAX];
+	EntityId         m_localId;
 
 public:
 	CPlayerManager();
@@ -25,4 +26,6 @@ public:
 	bool             IsActive(EntityId playerId);
 	CNetworkPlayer * Get(EntityId playerId);
 	EntityId         GetCount();
+	void             SetLocalId(EntityId localId);
+	EntityId         GetLocalId();
 };

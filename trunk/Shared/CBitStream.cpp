@@ -151,7 +151,6 @@ void CBitStream::WriteCompressed(const double &inVar)
 	m_pBitStream->WriteCompressed(inVar);
 }
 
-// Read any integral type from the BitStream.
 bool CBitStream::Read(bool &outVar)
 {
 	return m_pBitStream->Read(outVar);
@@ -207,7 +206,6 @@ bool CBitStream::Read(double &outVar)
 	return m_pBitStream->Read(outVar);
 }
 
-// Read any compressed integral type from the BitStream.
 bool CBitStream::ReadCompressed(bool &outVar)
 {
 	return m_pBitStream->ReadCompressed(outVar);
@@ -263,13 +261,11 @@ bool CBitStream::ReadCompressed(double &outVar)
 	return m_pBitStream->ReadCompressed(outVar);
 }
 
-// Write an array or casted stream or raw data to the BitStream.
 void CBitStream::Write(const char * inputByteArray, const unsigned int numberOfBytes)
 {
 	m_pBitStream->Write(inputByteArray, numberOfBytes);
 }
 
-// Read an array or casted stream or raw data from the BitStream.
 bool CBitStream::Read(char * outputByteArray, const unsigned int numberOfBytes)
 {
 	return m_pBitStream->Read(outputByteArray, numberOfBytes);
@@ -290,60 +286,32 @@ bool CBitStream::ReadBit(void)
 	return m_pBitStream->ReadBit();
 }
 
-// Returns a pointer to the data in the BitStream.
 unsigned char * CBitStream::GetData()
 {
 	return m_pBitStream->GetData();
 }
 
-// Returns the number of bits used in the BitStream.
 unsigned int CBitStream::GetNumberOfBitsUsed()
 {
 	return m_pBitStream->GetNumberOfBitsUsed();
 }
 
-// Returns the number of bytes used in the BitStream.
 unsigned int CBitStream::GetNumberOfBytesUsed()
 {
 	return m_pBitStream->GetNumberOfBytesUsed();
 }
 
-// Returns the number of unread bits left in the BitStream.
 unsigned int CBitStream::GetNumberOfUnreadBits()
 {
 	return m_pBitStream->GetNumberOfUnreadBits();
 }
 
-// Write a String to the BitStream.
 void CBitStream::Write(const String &inString)
 {
-	size_t sLength = inString.GetLength();
-	Write(sLength);
-	Write(inString.C_String(), sLength);
+	m_pBitStream->Write(inString);
 }
 
-// Read a String from the BitStream.
 bool CBitStream::Read(String &outString)
 {
-	outString.Clear();
-	size_t sLength = 0;
-	bool bReturn = Read(sLength);
-
-	if(bReturn && (sLength > 0))
-	{
-		outString.Allocate(sLength + 1);
-		char * szString = outString.GetData();
-		bReturn = Read(szString, sLength);
-
-		if(bReturn && (szString != NULL))
-		{
-			szString[sLength] = '\0';
-		}
-		else
-		{
-			outString.Clear();
-		}
-	}
-
-	return bReturn;
+	return m_pBitStream->Read(outString);
 }

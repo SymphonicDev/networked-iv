@@ -20,9 +20,10 @@ public:
 	CConfig();
 	~CConfig();
 
-	bool Open(String strFileName);
-	bool GetValueAsString(String strKey, String * strValue);
-	bool GetValueAsInteger(String strKey, int * iValue);
-	bool GetValueFloat(String strKey, float * fValue);
-	bool GetValueAsBoolean(String strKey, bool * bValue);
+	CXML * GetXML();
+	bool   Open(String strFileName);
+	bool   GetValueAsString(String strKey, String * strValue);
+	bool   GetValueAsInteger(String strKey, int * iValue);
+	bool   GetValueFloat(String strKey, float * fValue);
+	bool   GetValueAsBoolean(String strKey, bool * bValue);
 };

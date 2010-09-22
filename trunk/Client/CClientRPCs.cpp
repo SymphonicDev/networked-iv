@@ -9,6 +9,7 @@
 
 #include <StdInc.h>
 
+extern CClient *        g_pClient;
 extern CChatWindow *    g_pChatWindow;
 extern CPlayerManager * g_pPlayerManager;
 
@@ -22,6 +23,9 @@ void CClientRPCs::InitialData(CBitStreamInterface * pBitStream, EntityId playerI
 	// Read our player id
 	if(!pBitStream->ReadCompressed(ourPlayerId))
 		return;
+
+	// Set local player id
+	g_pPlayerManager->SetLocalId(ourPlayerId);
 
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connected to the server with player id %d", ourPlayerId);
 }
@@ -86,6 +90,42 @@ void CClientRPCs::DestroyPlayer(CBitStreamInterface * pBitStream, EntityId playe
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got DestroyPlayer RPC from server");
 }
 
+void CClientRPCs::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
+{
+	// Read the data the server sent us
+	EntityId inputPlayerId;
+	String strInput;
+
+	// Read the input player id
+	if(!pBitStream->ReadCompressed(inputPlayerId))
+		return;
+
+	// Read the input
+	if(!pBitStream->Read(strInput))
+		return;
+
+	// Set the message name to default
+	String strMessageName = "Invalid player";
+
+	// Get the network player pointer
+	CNetworkPlayer * pPlayer = g_pPlayerManager->Get(playerId);
+
+	// Is the network player pointer valid?
+	if(pPlayer)
+	{
+		// Set the message name
+		strMessageName = pPlayer->GetName();
+	}
+	// Is the input from ourselves?
+	else if(inputPlayerId == g_pPlayerManager->GetLocalId())
+	{
+		strMessageName = g_pClient->GetNick();
+	}
+
+	// TODO: MESSAGE_CHAT_COLOR
+	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d): %s (%d)", strMessageName.C_String(), inputPlayerId, strInput.C_String(), strInput.GetLength());
+}
+
 void CClientRPCs::Register(CRPCHandler * pRPCHandler)
 {
 	pRPCHandler->AddFunction(RPC_INITIAL_DATA, InitialData);
@@ -93,6 +133,7 @@ void CClientRPCs::Register(CRPCHandler * pRPCHandler)
 	pRPCHandler->AddFunction(RPC_DELETE_PLAYER, DeletePlayer);
 	pRPCHandler->AddFunction(RPC_SPAWN_PLAYER, SpawnPlayer);
 	pRPCHandler->AddFunction(RPC_DESTROY_PLAYER, DestroyPlayer);
+	pRPCHandler->AddFunction(RPC_CHAT_INPUT, ChatInput);
 }
 
 void CClientRPCs::Unregister(CRPCHandler * pRPCHandler)
@@ -102,4 +143,5 @@ void CClientRPCs::Unregister(CRPCHandler * pRPCHandler)
 	pRPCHandler->RemoveFunction(RPC_DELETE_PLAYER);
 	pRPCHandler->RemoveFunction(RPC_SPAWN_PLAYER);
 	pRPCHandler->RemoveFunction(RPC_DESTROY_PLAYER);
+	pRPCHandler->RemoveFunction(RPC_CHAT_INPUT);
 }

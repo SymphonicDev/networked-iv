@@ -101,3 +101,13 @@ EntityId CPlayerManager::GetCount()
 
 	return count;
 }
+
+void CPlayerManager::SetLocalId(EntityId localId)
+{
+	m_localId = localId;
+}
+
+EntityId CPlayerManager::GetLocalId()
+{
+	return m_localId;
+}

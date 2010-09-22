@@ -105,6 +105,9 @@ public:
 	// Append szString to the string
 	void          Append(const char * szString);
 
+	// Append szFormat and variable arguments to the string
+	void          AppendF(const char * szFormat, ...);
+
 	// Append ucChar to the string
 	void          Append(const unsigned char ucChar);
 
@@ -137,6 +140,10 @@ public:
 	// Ensure we have sSize amount of memory
 	// allocated
 	void          Allocate(size_t sSize);
+
+	// Resize the string to sSize and pad any
+	// extra bytes with 0
+	void          Resize(size_t sSize);
 
 	// Free any allocated memory
 	void          Free();

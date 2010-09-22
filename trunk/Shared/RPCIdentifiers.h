@@ -26,5 +26,8 @@ enum eRPCIdentfiers
 	RPC_SPAWN_PLAYER,
 
 	// Destroy a player
-	RPC_DESTROY_PLAYER
+	RPC_DESTROY_PLAYER,
+
+	// Send chat input
+	RPC_CHAT_INPUT
 };

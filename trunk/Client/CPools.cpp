@@ -14,7 +14,7 @@ extern CClient * g_pClient;
 unsigned int CPools::GetHandleFromPed(IVPed * pPed)
 {
 	DWORD dwFunc = (g_pClient->GetBaseAddress() + FUNC_CPool__HandleOf_7);
-	DWORD dwPedPool = (g_pClient->GetBaseAddress() + VAR_PedPool_7);
+	DWORD dwPedPool = *(DWORD *)(g_pClient->GetBaseAddress() + VAR_PedPool_7);
 	unsigned int uiHandle = 0;
 	_asm
 	{
@@ -29,7 +29,7 @@ unsigned int CPools::GetHandleFromPed(IVPed * pPed)
 IVPed * CPools::GetPedFromHandle(unsigned int uiHandle)
 {
 	DWORD dwFunc = (g_pClient->GetBaseAddress() + FUNC_CPool__AtHandle_7);
-	DWORD dwPedPool = (g_pClient->GetBaseAddress() + VAR_PedPool_7);
+	DWORD dwPedPool = *(DWORD *)(g_pClient->GetBaseAddress() + VAR_PedPool_7);
 	IVPed * pPed = NULL;
 	_asm
 	{
@@ -44,7 +44,7 @@ IVPed * CPools::GetPedFromHandle(unsigned int uiHandle)
 unsigned int CPools::GetHandleFromVehicle(DWORD dwVehicle)
 {
 	DWORD dwFunc = (g_pClient->GetBaseAddress() + FUNC_CPool__HandleOf_7);
-	DWORD dwVehiclePool = (g_pClient->GetBaseAddress() + VAR_VehiclePool_7);
+	DWORD dwVehiclePool = *(DWORD *)(g_pClient->GetBaseAddress() + VAR_VehiclePool_7);
 	unsigned int uiHandle = 0;
 	_asm
 	{
@@ -59,7 +59,7 @@ unsigned int CPools::GetHandleFromVehicle(DWORD dwVehicle)
 DWORD CPools::GetVehicleFromHandle(unsigned int uiHandle)
 {
 	DWORD dwFunc = (g_pClient->GetBaseAddress() + FUNC_CPool__AtHandle_7);
-	DWORD dwVehiclePool = (g_pClient->GetBaseAddress() + VAR_VehiclePool_7);
+	DWORD dwVehiclePool = *(DWORD *)(g_pClient->GetBaseAddress() + VAR_VehiclePool_7);
 	DWORD dwVehicle = NULL;
 	_asm
 	{

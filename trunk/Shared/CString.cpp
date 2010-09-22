@@ -194,10 +194,9 @@ bool String::IsUpper()
 
 void String::Truncate(size_t sOffset)
 {
-	// TODO: Use allocated size instead of/aswell as the string length?
 	if(sOffset < GetLength())
 	{
-		m_strString[sOffset] = '\0';
+		m_strString.resize(sOffset);
 	}
 }
 
@@ -266,6 +265,25 @@ void String::Append(const char * szString)
 	// Make sure the string is valid
 	if(szString)
 	{
+		// Copy the string to the end of our string
+		m_strString.append(szString);
+
+		// Ensure we haven't passed the string limit
+		LimitTruncate();
+	}
+}
+
+void String::AppendF(const char * szFormat, ...)
+{
+	// Make sure the format is valid
+	if(szFormat)
+	{
+		char szString[BUFFER_SIZE];
+		va_list vaArgs;
+		va_start(vaArgs, szFormat);
+		vsprintf(szString, szFormat, vaArgs);
+		va_end(vaArgs);
+
 		// Copy the string to the end of our string
 		m_strString.append(szString);
 
@@ -352,6 +370,11 @@ void String::Allocate(size_t sSize)
 	}*/
 
 	m_strString.reserve(sSize);
+}
+
+void String::Resize(size_t sSize)
+{
+	m_strString.resize(sSize);
 }
 
 void String::Free()

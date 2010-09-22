@@ -97,4 +97,10 @@ public:
 
 	// Returns the number of unread bits left in the BitStream.
 	virtual unsigned int    GetNumberOfUnreadBits() = 0;
+
+	// Write a String to the BitStream.
+	virtual void            Write(const String &inString) = 0;
+
+	// Read a String from the BitStream.
+	virtual bool            Read(String &outString) = 0;
 };

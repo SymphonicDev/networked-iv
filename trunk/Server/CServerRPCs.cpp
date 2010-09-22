@@ -38,13 +38,48 @@ void CServerRPCs::InitialData(CBitStreamInterface * pBitStream, EntityId playerI
 	// Send them all current players
 	g_pPlayerManager->HandlePlayerJoin(playerId);
 
-	CLogFile::Printf("Player %d has joined the game (Name %s)", playerId, strName.C_String());
+	CLogFile::Printf("Player %d has joined the game (Name: %s)", playerId, strName.C_String());
+}
+
+void CServerRPCs::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
+{
+	CLogFile::Printf("Got ChatInput RPC from player %d", playerId);
+
+	// Read the data they sent us
+	bool bIsCommand;
+	String strInput;
+
+	// Read if its a command or not
+	bIsCommand = pBitStream->ReadBit();
+
+	// Read the input
+	if(!pBitStream->Read(strInput))
+		return;
+
+	// Is it not a command?
+	if(!bIsCommand)
+	{
+		// Construct the chat input bit stream
+		CBitStream bitStream;
+
+		// Write the player id
+		bitStream.WriteCompressed(playerId);
+
+		// Write the input
+		bitStream.Write(strInput);
+
+		// Send it to all other players
+		g_pNetworkManager->RPC(RPC_CHAT_INPUT, &bitStream, PRIORITY_HIGH, RELIABILITY_RELIABLE_ORDERED, INVALID_ENTITY_ID, true);
+	}
+
+	CLogFile::Printf("Recieved chat input from player %d (Command?: %s, Input: %s)", playerId, bIsCommand ? "Yes" : "No", strInput.C_String());
 }
 
 void CServerRPCs::Register(CRPCHandler * pRPCHandler)
 {
 	CLogFile::Printf("Registering server RPCs");
 	pRPCHandler->AddFunction(RPC_INITIAL_DATA, InitialData);
+	pRPCHandler->AddFunction(RPC_CHAT_INPUT, ChatInput);
 	CLogFile::Printf("Server RPCs registered");
 }
 
@@ -52,5 +87,6 @@ void CServerRPCs::Unregister(CRPCHandler * pRPCHandler)
 {
 	CLogFile::Printf("Unregistering server RPCs");
 	pRPCHandler->RemoveFunction(RPC_INITIAL_DATA);
+	pRPCHandler->RemoveFunction(RPC_CHAT_INPUT);
 	CLogFile::Printf("Server RPCs unregistered");
 }

@@ -19,6 +19,11 @@ CConfig::~CConfig()
 	SAFE_DELETE(m_pXML);
 }
 
+CXML * CConfig::GetXML()
+{
+	return m_pXML;
+}
+
 bool CConfig::Open(String strFileName)
 {
 	return m_pXML->load(strFileName);

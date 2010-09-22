@@ -9,6 +9,8 @@
 
 #include <StdInc.h>
 
+extern CNetworkManager * g_pNetworkManager;
+
 CChatWindow::CChatWindow(CFont * pFont)
 {
 	m_bEnabled = false;
@@ -16,7 +18,9 @@ CChatWindow::CChatWindow(CFont * pFont)
 
 	// Create all the chat lines
 	for(int i = 0; i < NUM_CHAT_LINES; i++)
+	{
 		m_pChatLines[i] = new CChatLine(pFont);
+	}
 
 	m_iCurrentPageScroll = 0;
 	m_uiTotalMessages = 0;
@@ -28,7 +32,9 @@ CChatWindow::~CChatWindow()
 {
 	// Delete all the chat lines
 	for(int i = 0; i < NUM_CHAT_LINES; i++)
+	{
 		SAFE_DELETE(m_pChatLines[i]);
+	}
 }
 
 void CChatWindow::Draw()
@@ -80,14 +86,18 @@ void CChatWindow::OutputMessage(DWORD dwColor, char * szFormat, ...)
 	{
 		// Is the chat line below this active?
 		if(m_pChatLines[i - 1]->IsActive())
+		{
 			// Copy it to this chat line
 			memcpy(m_pChatLines[i], m_pChatLines[i - 1], sizeof(CChatLine));
+		}
 		else
 		{
 			// Is this chat line active?
 			if(m_pChatLines[i]->IsActive())
+			{
 				// Reset this chat line
 				m_pChatLines[i]->Reset();
+			}
 		}
 	}
 
@@ -122,8 +132,10 @@ void CChatWindow::ScrollPageUp()
 	{
 		// Do we have any text on the page above?
 		if(m_uiTotalMessages > (unsigned int)((m_iCurrentPageScroll + 1) * NUM_CHAT_LINES_PER_PAGE))
+		{
 			// Increment the current page scroll
 			m_iCurrentPageScroll++;
+		}
 	}
 }
 
@@ -131,8 +143,10 @@ void CChatWindow::ScrollPageDown()
 {
 	// Have we not reached the page lower yet?
 	if(m_iCurrentPageScroll > 0)
+	{
 		// Decrement the current page scroll
 		m_iCurrentPageScroll--;
+	}
 }
 
 void CChatWindow::EnableInput()
@@ -150,7 +164,68 @@ bool CChatWindow::IsInputEnabled()
 	return m_bInputEnabled;
 }
 
-bool CChatWindow::HandleInput(unsigned int uMsg, DWORD dwChar)
+bool CChatWindow::CapInputBuffer(size_t sOffset)
+{
+	// Make sure sOffset is valid
+	if(sOffset < strlen(m_szCurrentInput))
+	{
+		// Null terminate at sOffset
+		m_szCurrentInput[sOffset] = '\0';
+
+		return true;
+	}
+
+	// sOffset is invalid
+	return false;
+}
+
+void CChatWindow::ProcessInput()
+{
+	// Is there any input?
+	size_t sLen = strlen(m_szCurrentInput);
+	
+	if(sLen > 0)
+	{
+		// Is it a command (first char is a /)?
+		if(m_szCurrentInput[0] == '/')
+		{
+			// Check if we have a registered command for it
+
+
+			// TODO: return if processed here
+			//return;
+		}
+
+		// Do we have a valid network manager instance?
+		if(g_pNetworkManager)
+		{
+			// It's either chat, or an unregistered command, send it to the server
+			CBitStream bitStream;
+
+			// If it's a command write a 1 and don't send the /, else 0
+			String strInput;
+
+			if(m_szCurrentInput[0] == '/')
+			{
+				bitStream.Write1();
+				strInput.Set(m_szCurrentInput + 1);
+			}
+			else
+			{
+				bitStream.Write0();
+				strInput.Set(m_szCurrentInput);
+			}
+
+			// Write the input
+			bitStream.Write(strInput);
+
+			// Send it to the server
+			g_pNetworkManager->RPC(RPC_CHAT_INPUT, &bitStream, PRIORITY_HIGH, RELIABILITY_RELIABLE_ORDERED);
+		}
+	}
+}
+
+bool CChatWindow::HandleUserInput(unsigned int uMsg, DWORD dwChar)
 {
 	// Was it a key release?
 	if(uMsg == WM_KEYUP)
@@ -186,6 +261,25 @@ bool CChatWindow::HandleInput(unsigned int uMsg, DWORD dwChar)
 				return true;
 			}
 		}
+		// Was it the return key?
+		else if(dwChar == VK_RETURN)
+		{
+			// Is the input enabled?
+			if(m_bInputEnabled)
+			{
+				// Process input buffer
+				ProcessInput();
+
+				// Clear input buffer
+				CapInputBuffer(0);
+
+				// Disable input
+				DisableInput();
+
+				// Return true to indicate we handled it
+				return true;
+			}
+		}
 	}
 	// Was it a key press?
 	else if(uMsg == WM_KEYDOWN)
@@ -201,8 +295,9 @@ bool CChatWindow::HandleInput(unsigned int uMsg, DWORD dwChar)
 
 				if(sLen > 0)
 				{
-					// Replace the last char of the input with the null terminator
-					m_szCurrentInput[sLen - 1] = '\0';
+					// Cap input buffer at last char
+					CapInputBuffer(sLen - 1);
+
 					// Return true to indicate we handled it
 					return true;
 				}

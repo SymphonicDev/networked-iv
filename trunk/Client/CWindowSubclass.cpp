@@ -20,7 +20,7 @@ LRESULT APIENTRY CWindowSubclass::WndProc_Hook(HWND hWnd, UINT uMsg, WPARAM wPar
 	if(g_pChatWindow)
 	{
 		// Give this input to our chat window
-		if(g_pChatWindow->HandleInput(uMsg, (DWORD)wParam))
+		if(g_pChatWindow->HandleUserInput(uMsg, (DWORD)wParam))
 		{
 			// The chat window handled it
 			return 0;
