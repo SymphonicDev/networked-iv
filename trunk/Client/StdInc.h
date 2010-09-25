@@ -33,8 +33,8 @@
 #include <CBitStreamInterface.h>
 #include <CBitStream.h>
 #include <CRPCHandler.h>
-#include <CRakServerInterface.h>
 #include <CRakClientInterface.h>
+#include <CRakServerInterface.h>
 #include <CLibrary.h>
 #include <CNetModule.h>
 #include <CLogFile.h>
@@ -68,7 +68,7 @@
 
 // Project
 #include "CBitStream.h"
-#include "CClientRPCs.h"
+#include "CClientRPCHandler.h"
 #include "CClientPacketHandler.h"
 #include "CNetworkManager.h"
 #include "CLocalPlayer.h"

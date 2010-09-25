@@ -1,6 +1,6 @@
 //============== Networked: IV - http://code.networked-iv.com ==============
 //
-// File: CServerRPCs.cpp
+// File: CServerRPCHandler.cpp
 // Project: Server
 // Author(s): jenksta
 // License: See LICENSE in root directory
@@ -12,7 +12,7 @@
 extern CNetworkManager * g_pNetworkManager;
 extern CPlayerManager *  g_pPlayerManager;
 
-void CServerRPCs::InitialData(CBitStreamInterface * pBitStream, EntityId playerId)
+void CServerRPCHandler::InitialData(CBitStreamInterface * pBitStream, EntityId playerId)
 {
 	CLogFile::Printf("Got InitialData RPC from player %d", playerId);
 
@@ -41,7 +41,7 @@ void CServerRPCs::InitialData(CBitStreamInterface * pBitStream, EntityId playerI
 	CLogFile::Printf("Player %d has joined the game (Name: %s)", playerId, strName.C_String());
 }
 
-void CServerRPCs::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
+void CServerRPCHandler::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
 {
 	CLogFile::Printf("Got ChatInput RPC from player %d", playerId);
 
@@ -75,18 +75,18 @@ void CServerRPCs::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
 	CLogFile::Printf("Recieved chat input from player %d (Command?: %s, Input: %s)", playerId, bIsCommand ? "Yes" : "No", strInput.C_String());
 }
 
-void CServerRPCs::Register(CRPCHandler * pRPCHandler)
+void CServerRPCHandler::Register()
 {
 	CLogFile::Printf("Registering server RPCs");
-	pRPCHandler->AddFunction(RPC_INITIAL_DATA, InitialData);
-	pRPCHandler->AddFunction(RPC_CHAT_INPUT, ChatInput);
+	AddFunction(RPC_INITIAL_DATA, InitialData);
+	AddFunction(RPC_CHAT_INPUT, ChatInput);
 	CLogFile::Printf("Server RPCs registered");
 }
 
-void CServerRPCs::Unregister(CRPCHandler * pRPCHandler)
+void CServerRPCHandler::Unregister()
 {
 	CLogFile::Printf("Unregistering server RPCs");
-	pRPCHandler->RemoveFunction(RPC_INITIAL_DATA);
-	pRPCHandler->RemoveFunction(RPC_CHAT_INPUT);
+	RemoveFunction(RPC_INITIAL_DATA);
+	RemoveFunction(RPC_CHAT_INPUT);
 	CLogFile::Printf("Server RPCs unregistered");
 }

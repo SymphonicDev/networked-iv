@@ -14,8 +14,48 @@
 extern CClient * g_pClient;
 extern CGame *   g_pGame;
 
+// Quick And Hacky Player Ped Slot Code
+bool bInitQuickAndHackyPlayerPedSlotCode = false;
+BYTE byteFreePlayerPedSlots[32];
+
+void InitQuickAndHackyPlayerPedSlotCode()
+{
+	if(!bInitQuickAndHackyPlayerPedSlotCode)
+	{
+		byteFreePlayerPedSlots[0] = 1;
+		for(BYTE i = 1; i < 32; i++)
+		{
+			byteFreePlayerPedSlots[i] = 0;
+		}
+		bInitQuickAndHackyPlayerPedSlotCode = true;
+	}
+}
+
+BYTE FindQuickAndHackyPlayerPedSlot()
+{
+	if(bInitQuickAndHackyPlayerPedSlotCode)
+	{
+		for(BYTE i = 1; i < 32; i++)
+		{
+			if(!byteFreePlayerPedSlots[i])
+			{
+				return i;
+			}
+		}
+	}
+
+	return INVALID_PLAYER_PED;
+}
+
+void SetQuickAndHackyPlayerPedSlot(BYTE byteSlot, BYTE byteStatus)
+{
+	byteFreePlayerPedSlots[byteSlot] = byteStatus;
+}
+// End Quick And Hacky Player Ped Slot Code
+
 CPlayer::CPlayer(bool bLocalPlayer)
 {
+	InitQuickAndHackyPlayerPedSlotCode();
 	if(bLocalPlayer)
 	{
 		// Set the player index to local player index
@@ -68,30 +108,24 @@ bool CPlayer::Create()
 	// Are we not already created?
 	if(!IsSpawned())
 	{
-		CLogFile::Printf("Step 1");
 		// Find a free player info index
-		m_uiPlayerIndex = CPools::FindFreePlayerInfoIndex();
-		CLogFile::Printf("Step 2 (%d)", m_uiPlayerIndex);
+		m_uiPlayerIndex = FindQuickAndHackyPlayerPedSlot();
+
+		CLogFile::Printf("PlayerPed: %d, LocalPlayerPed: %d, LocalPlayerPointer: 0x%p", m_uiPlayerIndex, CPools::GetLocalPlayerIndex(), CPools::GetPlayerInfoFromIndex(0)->m_pPlayerPed);
 
 		// Invalid player info index?
 		if(m_uiPlayerIndex == INVALID_PLAYER_PED)
 			return false;
-		CLogFile::Printf("Step 3");
 
 		// Load model (if needed) and get model index
 		int iModelIndex = g_pGame->LoadModel(m_dwModelHash);
-		CLogFile::Printf("Step 4");
 
 		// Invalid model hash?
 		if(iModelIndex == -1)
 			return false;
 
-		CLogFile::Printf("Step 5");
-
 		// Save the local player index
 		unsigned int uiLocalPlayerIndex = CPools::GetLocalPlayerIndex();
-
-		CLogFile::Printf("Step 6");
 
 		// Create player ped
 		DWORD dwFunc = (g_pClient->GetBaseAddress() + FUNC_CreatePlayerPed_7);
@@ -110,18 +144,12 @@ bool CPlayer::Create()
 			add esp, 10h
 		}
 
-		CLogFile::Printf("Step 7");
-
 		// Restore the local player index
 		CPools::SetLocalPlayerIndex(uiLocalPlayerIndex);
-
-		CLogFile::Printf("Step 8");
 
 		// Invalid player ped?
 		if(!pPlayerPed)
 			return false;
-
-		CLogFile::Printf("Step 9");
 
 		// Setup ped intelligence
 		dwFunc = (g_pClient->GetBaseAddress() + FUNC_SetupPedIntelligence_7);
@@ -135,28 +163,26 @@ bool CPlayer::Create()
 		// Create player ped
 		m_pPlayerPed = new CIVPlayerPed(pPlayerPed);
 
-		CLogFile::Printf("Step 11");
-
 		// Get scripting handle
 		m_uiScriptingHandle = CPools::GetHandleFromPed((IVPed *)pPlayerPed);
 
-		CLogFile::Printf("Step 12 (%d)", m_uiScriptingHandle);
+		CLogFile::Printf("Handle is %d", m_uiScriptingHandle);
 
 		// Add to world
 		m_pPlayerPed->AddToWorld();
 
-		CLogFile::Printf("Step 13");
-
 		// Set health
 		//SetHealth(200);
 
+		// Set free slot
+		SetQuickAndHackyPlayerPedSlot(m_uiPlayerIndex, 1);
+
 		// Testing code
 		InvokeNative<void *>(0x575E2880, m_uiScriptingHandle, 200); // SET_CHAR_HEALTH
-		CLogFile::Printf("Step 15");
-		//InvokeNative<void *>(0x689D0F5F, m_uiScriptingHandle, -341.36f, 1144.80f, 14.79f); // SET_CHAR_COORDINATES
-		CLogFile::Printf("Step 16");
-		//InvokeNative<void *>(0x46B5523B, m_uiScriptingHandle, 40.114815f); // SET_CHAR_HEADING
-		CLogFile::Printf("Step 17");
+		InvokeNative<void *>(0x689D0F5F, m_uiScriptingHandle, -341.36f, 1144.80f, 14.79f); // SET_CHAR_COORDINATES
+		InvokeNative<void *>(0x46B5523B, m_uiScriptingHandle, 40.114815f); // SET_CHAR_HEADING
+
+		CLogFile::Printf("Done: PlayerPed: %d, LocalPlayerPed: %d, LocalPlayerPointer: 0x%p", m_uiPlayerIndex, CPools::GetLocalPlayerIndex(), CPools::GetPlayerInfoFromIndex(0)->m_pPlayerPed);
 
 		return true;
 	}
@@ -183,7 +209,7 @@ void CPlayer::Destroy()
 			call dwFunc
 		}
 
-		CLogFile::Printf("Deleting");
+		/*CLogFile::Printf("Deleting");
 
 		// Delete the player info
 		dwFunc = (g_pClient->GetBaseAddress() + FUNC_DeletePlayer);
@@ -195,13 +221,16 @@ void CPlayer::Destroy()
 			add esp, 4
 		}
 
-		CLogFile::Printf("Deleted");
+		CLogFile::Printf("Deleted");*/
 
 		// Delete the player ped instance
 		delete m_pPlayerPed;
 
 		// Set the player ped instance to NULL
 		m_pPlayerPed = NULL;
+
+		// Set free slot
+		SetQuickAndHackyPlayerPedSlot(m_uiPlayerIndex, 0);
 
 		// Invalidate the player index
 		m_uiPlayerIndex = -1;

@@ -261,7 +261,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\CServerRPCs.cpp"
+					RelativePath=".\CServerRPCHandler.cpp"
 					>
 				</File>
 				<Filter
@@ -379,10 +379,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\CPacket.h"
-					>
-				</File>
-				<File
 					RelativePath=".\CPlayer.h"
 					>
 				</File>
@@ -395,7 +391,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\CServerRPCs.h"
+					RelativePath=".\CServerRPCHandler.h"
 					>
 				</File>
 				<Filter
@@ -415,6 +411,10 @@
 					</File>
 					<File
 						RelativePath="..\Shared\CNetModule.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CPacket.h"
 						>
 					</File>
 					<File

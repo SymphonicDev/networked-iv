@@ -1,6 +1,6 @@
 //============== Networked: IV - http://code.networked-iv.com ==============
 //
-// File: CClientRPCs.cpp
+// File: CClientRPCHandler.cpp
 // Project: Client
 // Author(s): jenksta
 // License: See LICENSE in root directory
@@ -13,7 +13,7 @@ extern CClient *        g_pClient;
 extern CChatWindow *    g_pChatWindow;
 extern CPlayerManager * g_pPlayerManager;
 
-void CClientRPCs::InitialData(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientRPCHandler::InitialData(CBitStreamInterface * pBitStream, EntityId playerId)
 {
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got InitialData RPC from server");
 
@@ -30,7 +30,7 @@ void CClientRPCs::InitialData(CBitStreamInterface * pBitStream, EntityId playerI
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connected to the server with player id %d", ourPlayerId);
 }
 
-void CClientRPCs::AddPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientRPCHandler::AddPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 {
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got AddPlayer RPC from server");
 
@@ -52,7 +52,7 @@ void CClientRPCs::AddPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d) has connected to the server", strName.C_String(), newPlayerId);
 }
 
-void CClientRPCs::DeletePlayer(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientRPCHandler::DeletePlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 {
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got DeletePlayer RPC from server");
 
@@ -80,17 +80,17 @@ void CClientRPCs::DeletePlayer(CBitStreamInterface * pBitStream, EntityId player
 	}
 }
 
-void CClientRPCs::SpawnPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientRPCHandler::SpawnPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 {
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got SpawnPlayer RPC from server");
 }
 
-void CClientRPCs::DestroyPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientRPCHandler::DestroyPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 {
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got DestroyPlayer RPC from server");
 }
 
-void CClientRPCs::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientRPCHandler::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
 {
 	// Read the data the server sent us
 	EntityId inputPlayerId;
@@ -126,22 +126,22 @@ void CClientRPCs::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d): %s (%d)", strMessageName.C_String(), inputPlayerId, strInput.C_String(), strInput.GetLength());
 }
 
-void CClientRPCs::Register(CRPCHandler * pRPCHandler)
+void CClientRPCHandler::Register()
 {
-	pRPCHandler->AddFunction(RPC_INITIAL_DATA, InitialData);
-	pRPCHandler->AddFunction(RPC_ADD_PLAYER, AddPlayer);
-	pRPCHandler->AddFunction(RPC_DELETE_PLAYER, DeletePlayer);
-	pRPCHandler->AddFunction(RPC_SPAWN_PLAYER, SpawnPlayer);
-	pRPCHandler->AddFunction(RPC_DESTROY_PLAYER, DestroyPlayer);
-	pRPCHandler->AddFunction(RPC_CHAT_INPUT, ChatInput);
+	AddFunction(RPC_INITIAL_DATA, InitialData);
+	AddFunction(RPC_ADD_PLAYER, AddPlayer);
+	AddFunction(RPC_DELETE_PLAYER, DeletePlayer);
+	AddFunction(RPC_SPAWN_PLAYER, SpawnPlayer);
+	AddFunction(RPC_DESTROY_PLAYER, DestroyPlayer);
+	AddFunction(RPC_CHAT_INPUT, ChatInput);
 }
 
-void CClientRPCs::Unregister(CRPCHandler * pRPCHandler)
+void CClientRPCHandler::Unregister()
 {
-	pRPCHandler->RemoveFunction(RPC_INITIAL_DATA);
-	pRPCHandler->RemoveFunction(RPC_ADD_PLAYER);
-	pRPCHandler->RemoveFunction(RPC_DELETE_PLAYER);
-	pRPCHandler->RemoveFunction(RPC_SPAWN_PLAYER);
-	pRPCHandler->RemoveFunction(RPC_DESTROY_PLAYER);
-	pRPCHandler->RemoveFunction(RPC_CHAT_INPUT);
+	RemoveFunction(RPC_INITIAL_DATA);
+	RemoveFunction(RPC_ADD_PLAYER);
+	RemoveFunction(RPC_DELETE_PLAYER);
+	RemoveFunction(RPC_SPAWN_PLAYER);
+	RemoveFunction(RPC_DESTROY_PLAYER);
+	RemoveFunction(RPC_CHAT_INPUT);
 }

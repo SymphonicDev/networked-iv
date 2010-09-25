@@ -17,7 +17,7 @@ CNetworkManager::CNetworkManager()
 	m_pRakClient = g_pNetModule->GetRakClientInterface();
 
 	// Create the rpc handler instance
-	m_pRPCHandler = new CRPCHandler();
+	m_pClientRPCHandler = new CClientRPCHandler();
 
 	// Create the packet handler instance
 	m_pPacketHandler = new CPacketHandler();
@@ -29,7 +29,7 @@ CNetworkManager::~CNetworkManager()
 	SAFE_DELETE(m_pPacketHandler);
 
 	// Delete the rpc handler instance
-	SAFE_DELETE(m_pRPCHandler);
+	SAFE_DELETE(m_pClientRPCHandler);
 
 	// Shutdown the RakClient instance
 	m_pRakClient->Shutdown(500);
@@ -44,7 +44,7 @@ void CNetworkManager::Startup(String strHost, unsigned short usPort, String strP
 	m_pRakClient->Startup();
 
 	// Set the RakClient host
-	m_pRakClient->SetHost(strHost.C_String());
+	m_pRakClient->SetHost(strHost);
 
 	// Set the RakClient port
 	m_pRakClient->SetPort(usPort);
@@ -53,11 +53,11 @@ void CNetworkManager::Startup(String strHost, unsigned short usPort, String strP
 	if(!strPassword.IsEmpty())
 	{
 		// Set the RakClient password
-		m_pRakClient->SetPassword(strPassword.C_String());
+		m_pRakClient->SetPassword(strPassword);
 	}
 
 	// Register the rpcs
-	CClientRPCs::Register(m_pRPCHandler);
+	m_pClientRPCHandler->Register();
 }
 
 void CNetworkManager::Process()
@@ -67,16 +67,12 @@ void CNetworkManager::Process()
 	// Loop until we have processed all packets in the packet queue (if any)
 	while(pPacket = m_pRakClient->Receive())
 	{
-		// Pass it to the rpc handler
-		if(!m_pRPCHandler->HandlePacket(pPacket))
+		// Pass it to the packet handler, if that doesn't handle it, pass it to the rpc handler
+		if(!m_pPacketHandler->HandlePacket(pPacket) && !m_pClientRPCHandler->HandlePacket(pPacket))
 		{
-			// The rpc handler didn't handle it, pass it to the packet handler
-			if(!m_pPacketHandler->HandlePacket(pPacket))
-			{
 #ifdef _DEBUG
-				CLogFile::Printf("Warning: Unhandled packet (Id: %d)\n", pPacket->packetId);
+			CLogFile::Printf("Warning: Unhandled packet (Id: %d)\n", pPacket->packetId);
 #endif
-			}
 		}
 
 		// Deallocate the packet memory used

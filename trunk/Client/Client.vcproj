@@ -345,7 +345,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\CClientRPCs.cpp"
+					RelativePath=".\CClientRPCHandler.cpp"
 					>
 				</File>
 				<File
@@ -543,7 +543,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\CClientRPCs.h"
+					RelativePath=".\CClientRPCHandler.h"
 					>
 				</File>
 				<File

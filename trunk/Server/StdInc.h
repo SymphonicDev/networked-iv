@@ -51,7 +51,7 @@
 // Project
 #include "CConfig.h"
 #include "CServer.h"
-#include "CServerRPCs.h"
+#include "CServerRPCHandler.h"
 #include "CServerPacketHandler.h"
 #include "CNetworkManager.h"
 #include "CPlayer.h"

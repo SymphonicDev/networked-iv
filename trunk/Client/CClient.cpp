@@ -253,7 +253,7 @@ void CClient::OnD3DBeginScene(IDirect3DDevice9 * pD3DDevice)
 }
 
 bool bCreatePlayer = false;
-CPlayer * pPlayer = NULL;
+CPlayer * pPlayers[32];
 bool bCreateVehicle = false;
 bool bChangeModel = false;
 
@@ -264,20 +264,26 @@ void CClient::OnD3DEndScene(IDirect3DDevice9 * pD3DDevice)
 	{
 		if(!bCreatePlayer)
 		{
-			CLogFile::Printf("Creating player...");
-			DWORD dwStart = GetTickCount();
-			pPlayer = new CPlayer(false);
-			pPlayer->Create();
-			DWORD dwEnd = GetTickCount();
-			CLogFile::Printf("Player created (%dms)!", (dwEnd - dwStart));
+			for(BYTE i = 1; i < 32; i++)
+			{
+				CLogFile::Printf("Creating player...");
+				DWORD dwStart = GetTickCount();
+				pPlayers[i] = new CPlayer(false);
+				pPlayers[i]->Create();
+				DWORD dwEnd = GetTickCount();
+				CLogFile::Printf("Player created (%dms)!", (dwEnd - dwStart));
+			}
 		}
 		else
 		{
-			CLogFile::Printf("Destroying player...");
-			pPlayer->Destroy();
-			CLogFile::Printf("Player destroyed!");
-			delete pPlayer;
-			CLogFile::Printf("Player deleted!");
+			for(BYTE i = 1; i < 32; i++)
+			{
+				CLogFile::Printf("Destroying player...");
+				pPlayers[i]->Destroy();
+				CLogFile::Printf("Player destroyed!");
+				delete pPlayers[i];
+				CLogFile::Printf("Player deleted!");
+			}
 		}
 
 		bCreatePlayer = !bCreatePlayer;
@@ -347,7 +353,7 @@ void CClient::OnGameLoad()
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Starting network manager...");
 	g_pNetworkManager->Startup(m_strIp, m_usPort, m_strPassword);
 	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Network manager started!");
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Establishing connection to 127.0.0.1:9999...");
+	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Establishing connection to %s:%d...", m_strIp.C_String(), m_usPort);
 	g_pNetworkManager->Connect();
 }
 

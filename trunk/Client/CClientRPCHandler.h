@@ -1,6 +1,6 @@
 //============== Networked: IV - http://code.networked-iv.com ==============
 //
-// File: CClientRPCs.h
+// File: CClientRPCHandler.h
 // Project: Client
 // Author(s): jenksta
 // License: See LICENSE in root directory
@@ -11,7 +11,7 @@
 
 #include <StdInc.h>
 
-class CClientRPCs
+class CClientRPCHandler : public CRPCHandler
 {
 private:
 	static void InitialData(CBitStreamInterface * pBitStream, EntityId playerId);
@@ -22,6 +22,6 @@ private:
 	static void ChatInput(CBitStreamInterface * pBitStream, EntityId playerId);
 
 public:
-	static void Register(CRPCHandler * pRPCHandler);
-	static void Unregister(CRPCHandler * pRPCHandler);
+	void        Register();
+	void        Unregister();
 };

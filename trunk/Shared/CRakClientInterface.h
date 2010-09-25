@@ -14,7 +14,7 @@
 class CRakClientInterface
 {
 public:
-	virtual bool               Startup(String strEncryptionKeyE = "", String strEncryptionKeyModulus = "") = 0;
+	virtual bool               Startup() = 0;
 	virtual void               Shutdown(int iBlockDuration) = 0;
 	virtual bool               Connect() = 0;
 	virtual void               Disconnect() = 0;

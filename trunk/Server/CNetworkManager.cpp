@@ -17,7 +17,7 @@ CNetworkManager::CNetworkManager()
 	m_pRakServer = g_pNetModule->GetRakServerInterface();
 
 	// Create the rpc handler instance
-	m_pRPCHandler = new CRPCHandler();
+	m_pServerRPCHandler = new CServerRPCHandler();
 
 	// Create the packet handler instance
 	m_pPacketHandler = new CPacketHandler();
@@ -29,7 +29,7 @@ CNetworkManager::~CNetworkManager()
 	SAFE_DELETE(m_pPacketHandler);
 
 	// Delete the rpc handler instance
-	SAFE_DELETE(m_pRPCHandler);
+	SAFE_DELETE(m_pServerRPCHandler);
 
 	// Shutdown the RakServer instance
 	m_pRakServer->Shutdown(500);
@@ -51,7 +51,7 @@ void CNetworkManager::Startup(int iPort, int iMaxPlayers, String strPassword, St
 	}
 
 	// Register the rpcs
-	CServerRPCs::Register(m_pRPCHandler);
+	m_pServerRPCHandler->Register();
 }
 
 void CNetworkManager::Process()
@@ -63,7 +63,7 @@ void CNetworkManager::Process()
 		printf("Got packet %d from player %d\n", pPacket->packetId, pPacket->playerId);
 
 		// Pass it to the rpc handler
-		if(!m_pRPCHandler->HandlePacket(pPacket))
+		if(!m_pServerRPCHandler->HandlePacket(pPacket))
 		{
 			// The rpc handler didn't handler it, pass it to the packet handler
 			if(!m_pPacketHandler->HandlePacket(pPacket))

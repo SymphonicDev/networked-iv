@@ -12,7 +12,6 @@
 
 #define MAX_NATIVE_PARAMS 16
 #define MAX_NATIVE_ARG_SIZE 4
-#define FUNC_ScrVM__FindNativeAddress_7 0x5A76D0
 #define VAR_ScrVM__ThreadPool_7 0x1983310
 
 class NativeContext : public scrNativeCallContext
@@ -26,7 +25,7 @@ public:
 	{
 		m_pArgs = (DWORD)&m_TempStack;
 		m_pReturn = (DWORD)&m_TempStack; // It's okay to point both args and return at 
-		// the same pointer. The game should handle this.
+										 // the same pointer. The game should handle this.
 		m_nArgCount = 0;
 		m_nDataCount = 0;
 	}
