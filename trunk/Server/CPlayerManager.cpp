@@ -44,6 +44,9 @@ bool CPlayerManager::Add(EntityId playerId, String strName)
 		// Add the player for everyone
 		m_pPlayers[playerId]->AddForWorld();
 
+		// Trigger the connection event
+		m_pPlayers[playerId]->CallEvent("playerConnect", NULL);
+
 		return true;
 	}
 
@@ -55,6 +58,9 @@ bool CPlayerManager::Delete(EntityId playerId)
 	// Is this player not active?
 	if(!IsActive(playerId))
 		return false;
+
+	// Trigger the disconnect event
+	m_pPlayers[playerId]->CallEvent("playerDisconnect", NULL);
 
 	// Delete the player for everyone
 	m_pPlayers[playerId]->DeleteForWorld();

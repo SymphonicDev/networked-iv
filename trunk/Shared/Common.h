@@ -36,12 +36,17 @@
 // Max name length
 #define NICK_MAX 32
 
-// Invalid entity id value
-#define INVALID_ENTITY_ID 0xFF
-
 // Type used for entity ids
 // NOTE: Must be unsigned
 typedef unsigned char EntityId;
 
+// Invalid entity id value
+#define INVALID_ENTITY_ID 0xFF
+
+// brandnew and sexy: Element ID
+typedef unsigned short EntityID;
+#define MAX_ENTITIES           0xFFFE
+#define INVALID_ENTITY_ID_LONG 0xFFFF
+
 // Safe object deletion macro
-#define SAFE_DELETE(data) if(data) delete data;
+#define SAFE_DELETE(data) if(data) { delete data; data = 0; }

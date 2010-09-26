@@ -11,8 +11,9 @@
 
 extern CNetworkManager * g_pNetworkManager;
 extern CPlayerManager *  g_pPlayerManager;
+extern CRootEntity *     g_pRootEntity;
 
-CPlayer::CPlayer(EntityId playerId, String strName)
+CPlayer::CPlayer(EntityId playerId, String strName) : CEntity(CEntity::PLAYER, g_pRootEntity, "player")
 {
 	m_playerId = playerId;
 	m_strName.SetLimit(NICK_MAX);
@@ -33,6 +34,11 @@ EntityId CPlayer::GetPlayerId()
 String CPlayer::GetName()
 {
 	return m_strName;
+}
+
+String CPlayer::GetIP()
+{
+	return g_pNetworkManager->GetPlayerIp( m_playerId );
 }
 
 bool CPlayer::IsSpawned()

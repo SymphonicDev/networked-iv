@@ -2,7 +2,7 @@
 //
 // File: CServer.cpp
 // Project: Server
-// Author(s): jenksta
+// Author(s): jenksta, mabako
 // License: See LICENSE in root directory
 //
 //==========================================================================
@@ -13,10 +13,12 @@
 #define SERVER_TITLE "Networked: IV Server"
 #endif
 
-CConfig *         g_pConfig = NULL;
-CNetModule *      g_pNetModule = NULL;
-CNetworkManager * g_pNetworkManager = NULL;
-CPlayerManager *  g_pPlayerManager = NULL;
+CConfig *          g_pConfig = NULL;
+CNetModule *       g_pNetModule = NULL;
+CNetworkManager *  g_pNetworkManager = NULL;
+CPlayerManager *   g_pPlayerManager = NULL;
+CRootEntity *      g_pRootEntity = NULL;
+CResourceManager * g_pResourceManager = NULL;
 
 CServer::CServer()
 {
@@ -119,6 +121,25 @@ bool CServer::OnLoad()
 
 	CLogFile::Printf("Network manager started up");
 
+	// Create the resource & scripting manager
+	CEntityIDs::Initalize();
+	g_pRootEntity = new CRootEntity();
+	g_pResourceManager = new CResourceManager();
+
+	// Load resources
+	TiXmlDocument pDocument("Server.conf");
+	if(pDocument.LoadFile())
+	{
+		TiXmlNode* pNode = pDocument.RootElement()->FirstChild("resource");
+		while(pNode)
+		{
+			String strResource = pNode->ToElement()->GetText();
+			if(strResource && strResource.GetLength()>0)
+				g_pResourceManager->Load(strResource);
+			pNode = pNode->NextSibling("resource");
+		}
+	}
+
 	// Set the server title
 #ifdef WIN32
 	SetTitle(SERVER_TITLE);
@@ -131,12 +152,12 @@ bool CServer::OnLoad()
 
 void CServer::Process()
 {
+	// Get the current tick count
+	DWORD dwTickCount = GetTickCount();
+
 	// Is show fps enabled?
 	if(m_bShowFPS)
 	{
-		// Get the current tick count
-		DWORD dwTickCount = GetTickCount();
-
 		// Get the amount of time elapsed since the last fps update
 		DWORD dwTimeElapsed = (dwTickCount - m_dwLastFPSUpdateTickCount);
 
@@ -166,6 +187,9 @@ void CServer::Process()
 	// Process the network manager
 	g_pNetworkManager->Process();
 
+	// Process the resource manager
+	g_pResourceManager->Process(dwTickCount);
+
 	// Process the input queue
 	ProcessInputQueue();
 }
@@ -173,6 +197,12 @@ void CServer::Process()
 void CServer::OnUnload()
 {
 	CLogFile::Printf("Server exiting...");
+
+	// Delete the resource manager
+	SAFE_DELETE(g_pResourceManager);
+
+	// Delete the scripting manager
+	SAFE_DELETE(g_pRootEntity);
 
 	// Delete the player manager instance
 	SAFE_DELETE(g_pPlayerManager);

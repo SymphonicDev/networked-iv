@@ -158,3 +158,5 @@ public:
 	// Return the data string
 	char *        GetData() const;
 };
+
+inline bool operator < (const String& strString, const String& strString2) { return strcmp(strString.Get(),strString2.Get()) < 0; }

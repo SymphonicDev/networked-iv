@@ -59,17 +59,25 @@ void CServerRPCHandler::ChatInput(CBitStreamInterface * pBitStream, EntityId pla
 	// Is it not a command?
 	if(!bIsCommand)
 	{
-		// Construct the chat input bit stream
-		CBitStream bitStream;
+		// Trigger the event, if it is cancelled, don't output the line to other players
+		CPlayer* pPlayer = g_pPlayerManager->Get(playerId);
+		CSquirrelArguments* pArguments = new CSquirrelArguments();
+		pArguments->push(strInput);
+		if(pPlayer && pPlayer->CallEvent("playerChat", pArguments))
+		{
+			// Construct the chat input bit stream
+			CBitStream bitStream;
 
-		// Write the player id
-		bitStream.WriteCompressed(playerId);
+			// Write the player id
+			bitStream.WriteCompressed(playerId);
 
-		// Write the input
-		bitStream.Write(strInput);
+			// Write the input
+			bitStream.Write(strInput);
 
-		// Send it to all other players
-		g_pNetworkManager->RPC(RPC_CHAT_INPUT, &bitStream, PRIORITY_HIGH, RELIABILITY_RELIABLE_ORDERED, INVALID_ENTITY_ID, true);
+			// Send it to all other players
+			g_pNetworkManager->RPC(RPC_CHAT_INPUT, &bitStream, PRIORITY_HIGH, RELIABILITY_RELIABLE_ORDERED, INVALID_ENTITY_ID, true);
+		}
+		delete pArguments;
 	}
 
 	CLogFile::Printf("Recieved chat input from player %d (Command?: %s, Input: %s)", playerId, bIsCommand ? "Yes" : "No", strInput.C_String());

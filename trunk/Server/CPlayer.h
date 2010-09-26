@@ -11,7 +11,7 @@
 
 #include <StdInc.h>
 
-class CPlayer
+class CPlayer : public CEntity
 {
 private:
 	EntityId m_playerId;
@@ -24,6 +24,7 @@ public:
 
 	EntityId GetPlayerId();
 	String   GetName();
+	String   GetIP();
 	bool     IsSpawned();
 	void     AddForPlayer(EntityId playerId);
 	void     AddForWorld();
