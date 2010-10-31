@@ -67,6 +67,10 @@ void CChatWindow::Draw()
 			sprintf(szBuffer, "> %s", m_szCurrentInput);
 
 			// Draw the input text
+			m_pFont->Draw(szBuffer, 0xFF000000, fX-1, fY);
+			m_pFont->Draw(szBuffer, 0xFF000000, fX+1, fY);
+			m_pFont->Draw(szBuffer, 0xFF000000, fX, fY-1);
+			m_pFont->Draw(szBuffer, 0xFF000000, fX, fY+1);
 			m_pFont->Draw(szBuffer, 0xFFFFFFFF, fX, fY);
 		}
 	}

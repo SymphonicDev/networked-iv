@@ -32,7 +32,11 @@ void CChatLine::Draw(float fPosX, float fPosY)
 	// Are we active?
 	if(m_bActive)
 	{
-		// Draw our text
+		// Draw our tex
+		m_pFont->Draw(m_szText, 0xFF000000, fPosX-1, fPosY);
+		m_pFont->Draw(m_szText, 0xFF000000, fPosX+1, fPosY);
+		m_pFont->Draw(m_szText, 0xFF000000, fPosX, fPosY-1);
+		m_pFont->Draw(m_szText, 0xFF000000, fPosX, fPosY+1);
 		m_pFont->Draw(m_szText, m_dwColor, fPosX, fPosY);
 	}
 }
