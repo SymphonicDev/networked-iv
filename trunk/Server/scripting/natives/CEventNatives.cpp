@@ -113,6 +113,7 @@ int CEventNatives::Call(SQVM* pVM)
 			if(!pArguments->pushFromStack(pVM, i))
 			{
 				sq_pushbool(pVM, false);
+				delete pArguments;
 				return 1;
 			}
 		}

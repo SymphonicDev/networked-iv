@@ -17,6 +17,8 @@
 #include <squirrel/sqstdstring.h>
 #include <squirrel/sqstdsystem.h>
 
+class CSquirrelArguments;
+
 class CSquirrelArgument
 {
 	SQObjectType type;
@@ -27,6 +29,7 @@ public:
 		float f;
 		String* str;
 		CEntity* pEntity;
+		CSquirrelArguments* pArray;
 	} data;
 
 	CSquirrelArgument(){type=OT_NULL;}
@@ -35,14 +38,13 @@ public:
 	CSquirrelArgument(float f){type=OT_FLOAT; data.f=f;}
 	CSquirrelArgument(String* str){type=OT_STRING; data.str=str;}
 	CSquirrelArgument(CEntity* pEntity){type=OT_FUNCPROTO; data.pEntity=pEntity;}
+	CSquirrelArgument(CSquirrelArguments* pArray, bool isArray);
 
-	~CSquirrelArgument()
-	{
-		if(type==OT_STRING)
-			delete data.str;
-	}
+	~CSquirrelArgument();
 
 	SQObjectType GetType(){return type;}
+
+	bool push(SQVM* pVM);
 };
 
 class CSquirrelArguments : public std::list<CSquirrelArgument*>
@@ -62,5 +64,6 @@ public:
 	void push(const char* c);
 	void push(String str);
 	void push(CEntity* pEntity);
+	void push(CSquirrelArguments* pArray, bool isArray);
 	bool pushFromStack(SQVM* pVM, int idx);
 };

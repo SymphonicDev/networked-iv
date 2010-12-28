@@ -64,6 +64,7 @@ int CTimerNatives::Set(SQVM* pVM)
 			if(!pArguments->pushFromStack(pVM, i))
 			{
 				sq_pushnull(pVM);
+				delete pArguments;
 				return 1;
 			}
 		}
