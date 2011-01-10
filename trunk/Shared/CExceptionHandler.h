@@ -1,20 +1,16 @@
 //============== Networked: IV - http://code.networked-iv.com ==============
 //
-// File: CServerNatives.h
-// Project: Server
-// Author(s): mabako
+// File: CExceptionHandler.h
+// Project: Shared
+// Author(s): jenksta
 // License: See LICENSE in root directory
 //
 //==========================================================================
 
 #pragma once
 
-#include <StdInc.h>
-
-class CServerNatives
+class CExceptionHandler
 {
 public:
-	static void LoadFunctions(CSquirrel* pSquirrel);
-	static int  Log(SQVM* pVM);
-	static int  TickCount(SQVM* pVM);
+	static void Install();
 };

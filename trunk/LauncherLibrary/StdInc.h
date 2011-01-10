@@ -17,5 +17,6 @@
 #include <time.h>
 
 // Shared
+#include <Common.h>
 #include <SharedUtility.h>
 #include <CPatcher.h>

@@ -107,7 +107,7 @@ HRESULT STDMETHODCALLTYPE CDirect3D9Proxy::CreateDevice(UINT Adapter, D3DDEVTYPE
 	CLogFile::Printf("CDirect3D9Proxy::CreateDevice Called");
 
 	// Set the window text
-	SetWindowText(hFocusWindow, MOD_NAME DEBUG_IDENTIFIER);
+	SetWindowText(hFocusWindow, MOD_NAME " " MOD_VERSION_STRING);
 
 	// Create the d3d device
 	HRESULT hr = m_pD3D->CreateDevice(Adapter, DeviceType, hFocusWindow, BehaviorFlags, pPresentationParameters, ppReturnedDeviceInterface);

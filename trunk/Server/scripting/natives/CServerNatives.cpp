@@ -11,11 +11,11 @@
 
 void CServerNatives::LoadFunctions(CSquirrel* pSquirrel)
 {
-	pSquirrel->RegisterFunction("log", log, 1, "s");
+	pSquirrel->RegisterFunction("log", Log, 1, "s");
 	pSquirrel->RegisterFunction("getTickCount", TickCount, 0);
 }
 
-int CServerNatives::log(SQVM* pVM)
+int CServerNatives::Log(SQVM* pVM)
 {
 	const char* text;
 	sq_getstring(pVM, 2, &text);

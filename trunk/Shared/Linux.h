@@ -1,11 +1,11 @@
-//============== IV-Multiplayer - http://code.iv-multiplayer.com ==============
+//============== Networked: IV - http://code.networked-iv.com ==============
 //
 // File: Linux.h
 // Project: Shared
 // Author(s): MaVe
 // License: See LICENSE in root directory
 //
-//=============================================================================
+//==========================================================================
 
 #pragma once
 

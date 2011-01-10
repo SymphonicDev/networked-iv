@@ -14,21 +14,38 @@
 class CClient
 {
 private:
-	unsigned int m_uiBaseAddress;
-	String m_strIp;
-	unsigned short m_usPort;
-	String m_strPassword;
-	String m_strNick;
+	CGame *           m_pGame;
+	CXLiveHook *      m_pXLiveHook;
+	CDirect3D9Hook *  m_pDirect3D9Hook;
+	CNetworkManager * m_pNetworkManager;
+	CLocalPlayer *    m_pLocalPlayer;
+	CPlayerManager *  m_pPlayerManager;
+	CFont *           m_pFont;
+	CChatWindow *     m_pChatWindow;
+	unsigned int      m_uiBaseAddress;
+	String            m_strIp;
+	unsigned short    m_usPort;
+	String            m_strPassword;
+	String            m_strNick;
 
 public:
-	bool         OnLoad();
-	void         OnUnload();
-	unsigned int GetBaseAddress();
-	void         OnD3DCreateDevice(IDirect3DDevice9 * pD3DDevice);
-	void         OnD3DLostDevice(IDirect3DDevice9 * pD3DDevice);
-	void         OnD3DResetDevice(IDirect3DDevice9 * pD3DDevice);
-	void         OnD3DBeginScene(IDirect3DDevice9 * pD3DDevice);
-	void         OnD3DEndScene(IDirect3DDevice9 * pD3DDevice);
-	void         OnGameLoad();
-	String       GetNick();
+	CGame *           GetGame() { return m_pGame; }
+	CXLiveHook *      GetXLiveHook() { return m_pXLiveHook; }
+	CDirect3D9Hook *  GetDirect3D9Hook() { return m_pDirect3D9Hook; }
+	CNetworkManager * GetNetworkManager() { return m_pNetworkManager; }
+	CLocalPlayer *    GetLocalPlayer() { return m_pLocalPlayer; }
+	CPlayerManager *  GetPlayerManager() { return m_pPlayerManager; }
+	CFont *           GetFont() { return m_pFont; }
+	CChatWindow *     GetChatWindow() { return m_pChatWindow; }
+	unsigned int      GetBaseAddress() { return m_uiBaseAddress; }
+	String            GetNick() { return m_strNick; }
+
+	bool              OnLoad();
+	void              OnUnload();
+	void              OnD3DCreateDevice(IDirect3DDevice9 * pD3DDevice);
+	void              OnD3DLostDevice(IDirect3DDevice9 * pD3DDevice);
+	void              OnD3DResetDevice(IDirect3DDevice9 * pD3DDevice);
+	void              OnD3DBeginScene(IDirect3DDevice9 * pD3DDevice);
+	void              OnD3DEndScene(IDirect3DDevice9 * pD3DDevice);
+	void              OnGameLoad();
 };

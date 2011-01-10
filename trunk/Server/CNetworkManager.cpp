@@ -9,33 +9,37 @@
 
 #include <StdInc.h>
 
-extern CNetModule * g_pNetModule;
-
 CNetworkManager::CNetworkManager()
 {
 	// Create the RakServer instance
-	m_pRakServer = g_pNetModule->GetRakServerInterface();
+	m_pRakServer = CNetModule::GetRakServerInterface();
+
+	// Create the packet handler instance
+	m_pServerPacketHandler = new CServerPacketHandler();
 
 	// Create the rpc handler instance
 	m_pServerRPCHandler = new CServerRPCHandler();
-
-	// Create the packet handler instance
-	m_pPacketHandler = new CPacketHandler();
 }
 
 CNetworkManager::~CNetworkManager()
 {
-	// Delete the packet handler instance
-	SAFE_DELETE(m_pPacketHandler);
+	// Unregister the rpcs
+	m_pServerRPCHandler->Unregister();
 
 	// Delete the rpc handler instance
 	SAFE_DELETE(m_pServerRPCHandler);
+
+	// Unregister the packets
+	m_pServerPacketHandler->Unregister();
+
+	// Delete the packet handler instance
+	SAFE_DELETE(m_pServerPacketHandler);
 
 	// Shutdown the RakServer instance
 	m_pRakServer->Shutdown(500);
 
 	// Delete the RakServer instance
-	g_pNetModule->DestroyRakServerInterface(m_pRakServer);
+	CNetModule::DestroyRakServerInterface(m_pRakServer);
 }
 
 void CNetworkManager::Startup(int iPort, int iMaxPlayers, String strPassword, String strHostAddress)
@@ -50,30 +54,31 @@ void CNetworkManager::Startup(int iPort, int iMaxPlayers, String strPassword, St
 		m_pRakServer->SetPassword(strPassword.C_String());
 	}
 
+	// Register the packets
+	m_pServerPacketHandler->Register();
+
 	// Register the rpcs
 	m_pServerRPCHandler->Register();
 }
 
 void CNetworkManager::Process()
 {
-	CPacket * pPacket;
-	
+	CPacket * pPacket = NULL;
+
+	// Loop until we have processed all packets in the packet queue (if any)
 	while(pPacket = m_pRakServer->Receive())
 	{
 		printf("Got packet %d from player %d\n", pPacket->packetId, pPacket->playerId);
 
-		// Pass it to the rpc handler
-		if(!m_pServerRPCHandler->HandlePacket(pPacket))
+		// Pass it to the packet handler, if that doesn't handle it, pass it to the rpc handler
+		if(!m_pServerPacketHandler->HandlePacket(pPacket) && !m_pServerRPCHandler->HandlePacket(pPacket))
 		{
-			// The rpc handler didn't handler it, pass it to the packet handler
-			if(!m_pPacketHandler->HandlePacket(pPacket))
-			{
 #ifdef _DEBUG
-				CLogFile::Printf("Warning: Unhandled packet (Id: %d)\n", pPacket->packetId);
+			CLogFile::Printf("Warning: Unhandled packet (Id: %d, Player: %d)", pPacket->packetId, pPacket->playerId);
 #endif
-			}
 		}
 
+		// Deallocate the packet memory used
 		m_pRakServer->DeallocatePacket(pPacket);
 	}
 }

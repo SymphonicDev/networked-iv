@@ -9,33 +9,39 @@
 
 #include <StdInc.h>
 
-extern CNetModule * g_pNetModule;
+extern CClient * g_pClient;
 
 CNetworkManager::CNetworkManager()
 {
 	// Create the RakClient instance
-	m_pRakClient = g_pNetModule->GetRakClientInterface();
+	m_pRakClient = CNetModule::GetRakClientInterface();
+
+	// Create the packet handler instance
+	m_pClientPacketHandler = new CClientPacketHandler();
 
 	// Create the rpc handler instance
 	m_pClientRPCHandler = new CClientRPCHandler();
-
-	// Create the packet handler instance
-	m_pPacketHandler = new CPacketHandler();
 }
 
 CNetworkManager::~CNetworkManager()
 {
-	// Delete the packet handler instance
-	SAFE_DELETE(m_pPacketHandler);
+	// Unregister the rpcs
+	m_pClientRPCHandler->Unregister();
 
 	// Delete the rpc handler instance
 	SAFE_DELETE(m_pClientRPCHandler);
+
+	// Unregister the packets
+	m_pClientPacketHandler->Unregister();
+
+	// Delete the packet handler instance
+	SAFE_DELETE(m_pClientPacketHandler);
 
 	// Shutdown the RakClient instance
 	m_pRakClient->Shutdown(500);
 
 	// Destroy the RakClient instance
-	g_pNetModule->DestroyRakClientInterface(m_pRakClient);
+	CNetModule::DestroyRakClientInterface(m_pRakClient);
 }
 
 void CNetworkManager::Startup(String strHost, unsigned short usPort, String strPassword)
@@ -56,22 +62,25 @@ void CNetworkManager::Startup(String strHost, unsigned short usPort, String strP
 		m_pRakClient->SetPassword(strPassword);
 	}
 
+	// Register the packets
+	m_pClientPacketHandler->Register();
+
 	// Register the rpcs
 	m_pClientRPCHandler->Register();
 }
 
 void CNetworkManager::Process()
 {
-	CPacket * pPacket;
+	CPacket * pPacket = NULL;
 
 	// Loop until we have processed all packets in the packet queue (if any)
 	while(pPacket = m_pRakClient->Receive())
 	{
 		// Pass it to the packet handler, if that doesn't handle it, pass it to the rpc handler
-		if(!m_pPacketHandler->HandlePacket(pPacket) && !m_pClientRPCHandler->HandlePacket(pPacket))
+		if(!m_pClientPacketHandler->HandlePacket(pPacket) && !m_pClientRPCHandler->HandlePacket(pPacket))
 		{
 #ifdef _DEBUG
-			CLogFile::Printf("Warning: Unhandled packet (Id: %d)\n", pPacket->packetId);
+			CLogFile::Printf("Warning: Unhandled packet (Id: %d)", pPacket->packetId);
 #endif
 		}
 

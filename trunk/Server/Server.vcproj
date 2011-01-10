@@ -182,6 +182,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\CExceptionHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\CLibrary.cpp"
 				>
 			</File>
@@ -276,6 +280,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\Shared\CPacketHandler.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\Shared\CRPCHandler.cpp"
 						>
 					</File>
@@ -322,7 +330,7 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="Thread"
+				Name="Threading"
 				>
 				<File
 					RelativePath="..\Shared\CMutex.cpp"
@@ -816,6 +824,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\CExceptionHandler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\CLibrary.h"
 				>
 			</File>
@@ -890,6 +902,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\Shared\CPacketHandler.h"
+						>
+					</File>
+					<File
 						RelativePath="..\Shared\CRakServerInterface.h"
 						>
 					</File>
@@ -940,7 +956,7 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="Thread"
+				Name="Threading"
 				>
 				<File
 					RelativePath="..\Shared\CMutex.h"

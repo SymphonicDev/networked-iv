@@ -24,7 +24,7 @@ CResource::CResource(String name) : CEntity(CEntity::RESOURCE, g_pRootEntity, "r
 		return;
 
 	// place all files are located in
-	m_strResourcePath = String("resources/%s",name.Get());
+	m_strResourcePath = String("%sresources/%s", SharedUtility::GetAppPath(), name.Get());
 
 	// load the meta.xml
 	if(!Reload())
@@ -43,28 +43,44 @@ CResource::~CResource()
 // Reloads the meta.xml
 bool CResource::Reload()
 {
+	// it's now invalid
 	m_bValidMeta = false;
 
 	// clear our saved stuff
 	m_scripts.clear();
 
-	// Load all scripts in the meta.xml
-	TiXmlDocument pDocument(String( "%s/meta.xml", m_strResourcePath.Get()));
-	if(!pDocument.LoadFile())
+	// Load all scripts in the meta.xml, create the xml instance
+	CXML * pXML = new CXML();
+
+	// Load the meta.xml file
+	if(!pXML || !pXML->load(String( "%s/meta.xml", m_strResourcePath.Get())))
 	{
 		CLogFile::Printf("Unable to load resource %s - no meta.xml", GetName().Get());
 		return false;
 	}
-	TiXmlNode* pNode = pDocument.RootElement()->FirstChild("script");
-	while(pNode)
+
+	// Get the first script node
+	if(pXML->findNode("script"))
 	{
-		String strScript = pNode->ToElement()->GetText();
-		if(strScript && strScript.GetLength()>0)
-			m_scripts.push_back(strScript);
-		pNode = pNode->NextSibling("script");
+		while(true)
+		{
+			// Get the script name
+			String strScript = pXML->nodeContent();
+
+			// Make sure the name is valid and attempt to load the script
+			if(strScript && !strScript.IsEmpty())
+				m_scripts.push_back(strScript);
+
+			// Attempt to load the next script node (if any)
+			if(!pXML->nextNode())
+				break;
+		}
 	}
 
-	// it's valid
+	// Delete the xml instance
+	SAFE_DELETE(pXML);
+
+	// it's now valid
 	m_bValidMeta = true;
 	return true;
 }

@@ -7,7 +7,7 @@
 
 int ShowMessageBox(char * szText, UINT uType = (MB_ICONEXCLAMATION | MB_OK))
 {
-	return MessageBox(NULL, szText, "Networked: IV", uType);
+	return MessageBox(NULL, szText, MOD_NAME, uType);
 }
 
 bool GetProcessIdFromProcessName(char * szProcessName, DWORD * dwProcessId)
@@ -31,8 +31,10 @@ bool GetProcessIdFromProcessName(char * szProcessName, DWORD * dwProcessId)
 			// Check the process name to see if it matches szProcessName
 			if(!strcmp(ProcessEntry.szExeFile, szProcessName))
 			{
-				// It matches, set the process id and return true
-				*dwProcessId = ProcessEntry.th32ProcessID;
+				// It matches, set the process id (if required) and return true
+				if(dwProcessId)
+					*dwProcessId = ProcessEntry.th32ProcessID;
+
 				bReturn = true;
 				break;
 			}
@@ -48,8 +50,7 @@ bool GetProcessIdFromProcessName(char * szProcessName, DWORD * dwProcessId)
 bool IsProcessRunning(char * szProcessName)
 {
 	// Simply return the value of GetProcessIdFromProcessName
-	DWORD dwProcessId = 0;
-	return GetProcessIdFromProcessName(szProcessName, &dwProcessId);
+	return GetProcessIdFromProcessName(szProcessName, NULL);
 }
 
 // CLauncherDialog dialog
@@ -85,7 +86,7 @@ void CLauncherDialog::LoadInfo()
 	SharedUtility::ReadRegistryString(HKEY_CURRENT_USER, "Software\\NIV", "ip", "127.0.0.1", szIp, sizeof(szIp));
 	SharedUtility::ReadRegistryString(HKEY_CURRENT_USER, "Software\\NIV", "port", "9999", szPort, sizeof(szPort));
 	SharedUtility::ReadRegistryString(HKEY_CURRENT_USER, "Software\\NIV", "nick", "Player", szNick, sizeof(szNick));
-	
+
 	// Set the edit boxes values
 	SetDlgItemText(IDC_EDIT1, szIp);
 	SetDlgItemText(IDC_EDIT2, szPort);
@@ -120,7 +121,10 @@ BOOL CLauncherDialog::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// TODO: Add extra initialization here
+	// Set window text
+	SetWindowText(MOD_NAME " v" MOD_VERSION_STRING " Launcher");
+
+	// Load the edit box values
 	LoadInfo();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -159,6 +163,7 @@ HCURSOR CLauncherDialog::OnQueryDragIcon()
 
 void CLauncherDialog::OnBnClickedCancel()
 {
+	// Save the edit box values
 	SaveInfo();
 	OnCancel();
 }
@@ -216,9 +221,7 @@ void CLauncherDialog::OnBnClickedOk()
 				{
 					// Get the name of the selected folder
 					if(SHGetPathFromIDList(pItemIdList, szInstallDirectory))
-					{
 						bFoundCustomDirectory = true;
-					}
 
 					// Free any memory used
 					IMalloc * pIMalloc = 0;
@@ -253,9 +256,7 @@ void CLauncherDialog::OnBnClickedOk()
 
 	// If we have a custom directory save it
 	if(bFoundCustomDirectory)
-	{
 		SharedUtility::WriteRegistryString(HKEY_CURRENT_USER, "Software\\NIV", "gtaivdir", szInstallDirectory, strlen(szInstallDirectory));
-	}
 
 	// Format the command line params
 	char szParams[256];

@@ -1,6 +1,6 @@
 //============== Networked: IV - http://code.networked-iv.com ==============
 //
-// File: CPacketHandler.h
+// File: CServerPacketHandler.h
 // Project: Server
 // Author(s): jenksta
 // License: See LICENSE in root directory
@@ -11,16 +11,14 @@
 
 #include <StdInc.h>
 
-class CPacketHandler
+class CServerPacketHandler : public CPacketHandler
 {
 private:
-	void NewConnection(CBitStreamInterface * pBitStream, EntityId playerId);
-	void Disconnected(CBitStreamInterface * pBitStream, EntityId playerId);
-	void LostConnection(CBitStreamInterface * pBitStream, EntityId playerId);
+	static void NewConnection(CBitStreamInterface * pBitStream, EntityId playerId);
+	static void Disconnected(CBitStreamInterface * pBitStream, EntityId playerId);
+	static void LostConnection(CBitStreamInterface * pBitStream, EntityId playerId);
 
 public:
-	CPacketHandler();
-	~CPacketHandler();
-
-	bool HandlePacket(CPacket * pPacket);
+	void        Register();
+	void        Unregister();
 };

@@ -24,18 +24,40 @@ public:
 	String(const char * szFormat, ...);
 	~String();
 
-	operator const char * () { return Get(); }
-	String& operator = (const String strString);
+	operator const char * ();
+
+	// Assignment operator
 	String& operator = (const char * szString);
+	String& operator = (const String strString);
+
+	// Addition operator
 	String& operator += (const char * szString);
+	String& operator += (const String strString);
 	String& operator += (const unsigned char ucChar);
+
 	unsigned char operator [] (size_t sOffset);
+
 	bool operator == (const char * szString);
+	bool operator == (const String strString);
+
 	bool operator != (const char * szString);
+	bool operator != (const String strString);
+
+	// More than operator
 	bool operator > (const char * szString);
+	bool operator > (const String strString);
+
+	// More than or equal to operator
 	bool operator >= (const char * szString);
+	bool operator >= (const String strString);
+
+	// Less than operator
 	bool operator < (const char * szString);
+	bool operator < (const String strString);
+
+	// Less than or equal to operator
 	bool operator <= (const char * szString);
+	bool operator <= (const String strString);
 
 	// Return the non editable string
 	const char *  Get() const;
@@ -43,6 +65,7 @@ public:
 
 	// Set the string
 	void          Set(const char * szString);
+	void          Set(const String strString);
 
 	// Format the string
 	void          Format(const char * szFormat, ...);
@@ -81,11 +104,13 @@ public:
 	// memory
 	void          Clear();
 	
-	// Compare the string with szString (case sensitive)
+	// Compare the string with sz/strString (case sensitive)
 	int           Compare(const char * szString);
+	int           Compare(const String strString);
 
-	// Compare the string with szString (case insensitive)
+	// Compare the string with sz/strString (case insensitive)
 	int           ICompare(const char * szString);
+	int           ICompare(const String strString);
 
 	// Return the value of the string as an integer
 	int           ToInteger();
@@ -99,11 +124,13 @@ public:
 	// Return the char at sOffset
 	unsigned char GetChar(size_t sOffset);
 
-
+	// Return a substituted string from the string 
+	// at sOffset with a size of sCount
 	const char *  SubStr(size_t sOffset, size_t sCount) const;
 
-	// Append szString to the string
+	// Append sz/strString to the string
 	void          Append(const char * szString);
+	void          Append(const String strString);
 
 	// Append szFormat and variable arguments to the string
 	void          AppendF(const char * szFormat, ...);
@@ -114,18 +141,21 @@ public:
 	// Insert szString into the string at sOffset
 	void          Insert(size_t sOffset, const char * szString);
 
-	// Attempt to find szString in the string, 
+	// Attempt to find sz/strString in the string, 
 	// if found return its index, if not return -1
 	size_t        Find(const char * szString) const;
+	size_t        Find(const String strString) const;
 
-	// Return true if the string contains szString, 
+	// Return true if the string contains sz/strString, 
 	// false if not
 	bool          Contains(const char * szString) const;
+	bool          Contains(const String strString) const;
 
-	// Starting at the end, attempt to find szString 
+	// Starting at the end, attempt to find sz/strString 
 	// in the string, if found return its index, if 
 	// not return -1
 	size_t        ReverseFind(const char * szString) const;
+	size_t        ReverseFind(const String strString) const;
 
 	// Set the string limit
 	bool          SetLimit(size_t sLimit);

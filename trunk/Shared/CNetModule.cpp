@@ -9,7 +9,27 @@
 
 #include <StdInc.h>
 
+CLibrary *                  CNetModule::m_pLibrary;
+GetRakServerInterface_t     CNetModule::m_pfnGetRakServerInterface;
+DestroyRakServerInterface_t CNetModule::m_pfnDestroyRakServerInterface;
+GetRakClientInterface_t     CNetModule::m_pfnGetRakClientInterface;
+DestroyRakClientInterface_t CNetModule::m_pfnDestroyRakClientInterface;
+GetBitStreamInterface1_t    CNetModule::m_pfnGetBitStreamInterface1;
+GetBitStreamInterface2_t    CNetModule::m_pfnGetBitStreamInterface2;
+GetBitStreamInterface3_t    CNetModule::m_pfnGetBitStreamInterface3;
+DestroyBitStreamInterface_t CNetModule::m_pfnDestroyBitStreamInterface;
+
 CNetModule::CNetModule()
+{
+
+}
+
+CNetModule::~CNetModule()
+{
+
+}
+
+bool CNetModule::Init()
 {
 	// Create the library instance
 	m_pLibrary = new CLibrary();
@@ -21,14 +41,14 @@ CNetModule::CNetModule()
 	if(!m_pLibrary->Load(strPath.C_String()))
 	{
 		CLogFile::Printf("Failed to load net module");
-		ExitProcess(0);
+		return false;
 	}
 
 	// Verify the net module version
 	if(!VerifyVersion(NETWORK_MODULE_VERSION))
 	{
 		CLogFile::Printf("Invalid net module version");
-		ExitProcess(0);
+		return false;
 	}
 
 	// Get pointers to the net module functions
@@ -47,11 +67,13 @@ CNetModule::CNetModule()
 		!m_pfnGetBitStreamInterface3 || !m_pfnDestroyBitStreamInterface)
 	{
 		CLogFile::Printf("Net module is corrupt");
-		ExitProcess(0);
+		return false;
 	}
+
+	return true;
 }
 
-CNetModule::~CNetModule()
+void CNetModule::Shutdown()
 {
 	// Unload the net module
 	m_pLibrary->Unload();

@@ -10,9 +10,7 @@
 
 #include <StdInc.h>
 
-extern CClient *	 g_pClient;
-extern CGame *		 g_pGame;
-extern CChatWindow * g_pChatWindow;
+extern CClient * g_pClient;
 
 CGame::CGame()
 {
@@ -23,7 +21,7 @@ CGame::CGame()
 		m_gameVersion = GAME_VERSION_7;
 	else
 	{
-		MessageBox(NULL, "Unknown game version detected. Networked: IV currently only supports version 1.0.7.0", "Unknown game version", NULL);
+		MessageBox(NULL, "Unknown game version detected. Networked: IV currently only supports game version 1.0.7.0", "Unknown game version", NULL);
 		ExitProcess(0);
 	}
 }
@@ -72,14 +70,14 @@ int CScriptVM__Process()
 	{
 		if(InvokeNative<bool>(0x59EE3A11) || InvokeNative<bool>(0x0A940E03)) // IS_SCREEN_FADED_OUT // IS_SCREEN_FADING_OUT
 		{
-			g_pGame->FadeScreen(FADE_TYPE_IN, 0);
+			g_pClient->GetGame()->FadeScreen(FADE_TYPE_IN, 0);
 			iScriptLoadStage++;
 		}
 	}
 
 	if(iScriptLoadStage == 3)
 	{
-		//g_pGame->FadeScreen(FADE_TYPE_OUT, 0);
+		//g_pClient->GetGame()->FadeScreen(FADE_TYPE_OUT, 0);
 		g_pClient->OnGameLoad();
 		iScriptLoadStage++;
 	}
@@ -343,11 +341,11 @@ int CGame::LoadModel(DWORD dwModelHash)
 }
 
 // TODO: CIVVehicleFactory
-DWORD CGame::CreateVehicle(DWORD dwModelHash)
+DWORD CGame::CreateVehicle(DWORD dwModelHash, Vector3 * vecPosition)
 {
 	unsigned int uiVehicleHandle;
-	InvokeNative<void *>(0x2F1D6843, dwModelHash, -346.36f, 1144.80f, 14.79f, &uiVehicleHandle, true);
-	return NULL;
+	InvokeNative<void *>(0x2F1D6843, dwModelHash, vecPosition->fX, vecPosition->fY, vecPosition->fZ, &uiVehicleHandle, true);
+	return CPools::GetVehicleFromHandle(uiVehicleHandle);
 	/*DWORD dwFunc = (g_pClient->GetBaseAddress() + FUNC_CVehicleFactory__Create_7);
 	DWORD dwVehicleFactory = (g_pClient->GetBaseAddress() + VAR_VehicleFactory_7);
 	int iUnknown = 0;

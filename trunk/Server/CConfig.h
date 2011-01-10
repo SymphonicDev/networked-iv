@@ -22,8 +22,8 @@ public:
 
 	CXML * GetXML();
 	bool   Open(String strFileName);
-	bool   GetValueAsString(String strKey, String * strValue);
-	bool   GetValueAsInteger(String strKey, int * iValue);
-	bool   GetValueFloat(String strKey, float * fValue);
-	bool   GetValueAsBoolean(String strKey, bool * bValue);
+	bool   GetValueAsString(String strKey, String strDefaultValue, String * strValue);
+	bool   GetValueAsInteger(String strKey, int iDefaultValue, int * iValue);
+	bool   GetValueAsFloat(String strKey, float fDefaultValue, float * fValue);
+	bool   GetValueAsBoolean(String strKey, bool bDefaultValue, bool * bValue);
 };

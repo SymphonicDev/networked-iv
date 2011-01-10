@@ -9,13 +9,11 @@
 
 #include <StdInc.h>
 
-extern CClient *        g_pClient;
-extern CChatWindow *    g_pChatWindow;
-extern CPlayerManager * g_pPlayerManager;
+extern CClient * g_pClient;
 
 void CClientRPCHandler::InitialData(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got InitialData RPC from server");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Got InitialData RPC from server");
 
 	// Read the data the server sent us
 	EntityId ourPlayerId;
@@ -25,14 +23,14 @@ void CClientRPCHandler::InitialData(CBitStreamInterface * pBitStream, EntityId p
 		return;
 
 	// Set local player id
-	g_pPlayerManager->SetLocalId(ourPlayerId);
+	g_pClient->GetPlayerManager()->SetLocalId(ourPlayerId);
 
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connected to the server with player id %d", ourPlayerId);
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Connected to the server with player id %d", ourPlayerId);
 }
 
 void CClientRPCHandler::AddPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got AddPlayer RPC from server");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Got AddPlayer RPC from server");
 
 	// Read the data the server sent us
 	EntityId newPlayerId;
@@ -47,14 +45,14 @@ void CClientRPCHandler::AddPlayer(CBitStreamInterface * pBitStream, EntityId pla
 		return;
 
 	// Add this player to the player manager
-	g_pPlayerManager->Add(newPlayerId, strName);
+	g_pClient->GetPlayerManager()->Add(newPlayerId, strName);
 
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d) has connected to the server", strName.C_String(), newPlayerId);
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d) has connected to the server", strName.C_String(), newPlayerId);
 }
 
 void CClientRPCHandler::DeletePlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got DeletePlayer RPC from server");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Got DeletePlayer RPC from server");
 
 	// Read the data the server sent us
 	EntityId newPlayerId;
@@ -64,30 +62,30 @@ void CClientRPCHandler::DeletePlayer(CBitStreamInterface * pBitStream, EntityId 
 		return;
 
 	// Get the network player pointer
-	CNetworkPlayer * pNetworkPlayer = g_pPlayerManager->Get(newPlayerId);
+	CNetworkPlayer * pNetworkPlayer = g_pClient->GetPlayerManager()->Get(newPlayerId);
 
 	// Is the network player pointer valid?
 	if(pNetworkPlayer)
 	{
-		g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d) has disconnected from the server", pNetworkPlayer->GetName().C_String(), newPlayerId);
+		g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d) has disconnected from the server", pNetworkPlayer->GetName().C_String(), newPlayerId);
 
 		// Delete this player from the player manager
-		g_pPlayerManager->Delete(playerId);
+		g_pClient->GetPlayerManager()->Delete(playerId);
 	}
 	else
 	{
-		g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Invalid player (Id: %d) has disconnected to the server", newPlayerId);
+		g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Invalid player (Id: %d) has disconnected to the server", newPlayerId);
 	}
 }
 
 void CClientRPCHandler::SpawnPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got SpawnPlayer RPC from server");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Got SpawnPlayer RPC from server");
 }
 
 void CClientRPCHandler::DestroyPlayer(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Got DestroyPlayer RPC from server");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Got DestroyPlayer RPC from server");
 }
 
 void CClientRPCHandler::ChatInput(CBitStreamInterface * pBitStream, EntityId playerId)
@@ -108,7 +106,7 @@ void CClientRPCHandler::ChatInput(CBitStreamInterface * pBitStream, EntityId pla
 	String strMessageName = "Invalid player";
 
 	// Get the network player pointer
-	CNetworkPlayer * pPlayer = g_pPlayerManager->Get(playerId);
+	CNetworkPlayer * pPlayer = g_pClient->GetPlayerManager()->Get(playerId);
 
 	// Is the network player pointer valid?
 	if(pPlayer)
@@ -117,13 +115,13 @@ void CClientRPCHandler::ChatInput(CBitStreamInterface * pBitStream, EntityId pla
 		strMessageName = pPlayer->GetName();
 	}
 	// Is the input from ourselves?
-	else if(inputPlayerId == g_pPlayerManager->GetLocalId())
+	else if(inputPlayerId == g_pClient->GetPlayerManager()->GetLocalId())
 	{
 		strMessageName = g_pClient->GetNick();
 	}
 
 	// TODO: MESSAGE_CHAT_COLOR
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d): %s (%d)", strMessageName.C_String(), inputPlayerId, strInput.C_String(), strInput.GetLength());
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "%s (Id: %d): %s (%d)", strMessageName.C_String(), inputPlayerId, strInput.C_String(), strInput.GetLength());
 }
 
 void CClientRPCHandler::Register()

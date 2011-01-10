@@ -39,10 +39,9 @@ String::~String()
 
 }
 
-String& String::operator = (const String strString)
+String::operator const char * ()
 {
-	Set(strString.C_String());
-	return *this;
+	return Get();
 }
 
 String& String::operator = (const char * szString)
@@ -51,9 +50,21 @@ String& String::operator = (const char * szString)
 	return *this;
 }
 
+String& String::operator = (const String strString)
+{
+	Set(strString.C_String());
+	return *this;
+}
+
 String& String::operator += (const char * szString)
 {
 	Append(szString);
+	return *this;
+}
+
+String& String::operator += (const String strString)
+{
+	Append(strString.Get());
 	return *this;
 }
 
@@ -73,9 +84,19 @@ bool String::operator == (const char * szString)
 	return (Compare(szString) == 0);
 }
 
+bool String::operator == (const String strString)
+{
+	return (Compare(strString.Get()) == 0);
+}
+
 bool String::operator != (const char * szString)
 {
 	return (Compare(szString) != 0);
+}
+
+bool String::operator != (const String strString)
+{
+	return (Compare(strString.Get()) != 0);
 }
 
 bool String::operator > (const char * szString)
@@ -83,9 +104,19 @@ bool String::operator > (const char * szString)
 	return (Compare(szString) > 0);
 }
 
+bool String::operator > (const String strString)
+{
+	return (Compare(strString.Get()) > 0);
+}
+
 bool String::operator >= (const char * szString)
 {
 	return (Compare(szString) >= 0);
+}
+
+bool String::operator >= (const String strString)
+{
+	return (Compare(strString.Get()) >= 0);
 }
 
 bool String::operator < (const char * szString)
@@ -93,9 +124,19 @@ bool String::operator < (const char * szString)
 	return (Compare(szString) < 0);
 }
 
+bool String::operator < (const String strString)
+{
+	return (Compare(strString.Get()) < 0);
+}
+
 bool String::operator <= (const char * szString)
 {
 	return (Compare(szString) <= 0);
+}
+
+bool String::operator <= (const String strString)
+{
+	return (Compare(strString.Get()) <= 0);
 }
 
 void String::Init()
@@ -124,6 +165,11 @@ void String::Set(const char * szString)
 		// Ensure we haven't passed the string limit
 		LimitTruncate();
 	}
+}
+
+void String::Set(const String strString)
+{
+	return Set(strString.C_String());
 }
 
 void String::Format(const char * szFormat, ...)
@@ -215,9 +261,19 @@ int String::Compare(const char * szString)
 	return strcmp(Get(), szString);
 }
 
+int String::Compare(const String strString)
+{
+	return Compare(strString.C_String());
+}
+
 int String::ICompare(const char * szString)
 {
 	return stricmp(Get(), szString);
+}
+
+int String::ICompare(const String strString)
+{
+	return Compare(strString.C_String());
 }
 
 int String::ToInteger()
@@ -273,6 +329,11 @@ void String::Append(const char * szString)
 	}
 }
 
+void String::Append(const String strString)
+{
+	return Append(strString.C_String());
+}
+
 void String::AppendF(const char * szFormat, ...)
 {
 	// Make sure the format is valid
@@ -320,14 +381,29 @@ size_t String::Find(const char * szString) const
 	return m_strString.find(szString);
 }
 
+size_t String::Find(const String strString) const
+{
+	return Find(strString.C_String());
+}
+
 bool String::Contains(const char * szString) const
 {
 	return (Find(szString) != -1);
 }
 
+bool String::Contains(const String strString) const
+{
+	return Contains(strString.C_String());
+}
+
 size_t String::ReverseFind(const char * szString) const
 {
 	return m_strString.rfind(szString);
+}
+
+size_t String::ReverseFind(const String strString) const
+{
+	return ReverseFind(strString.C_String());
 }
 
 bool String::SetLimit(size_t sLimit)

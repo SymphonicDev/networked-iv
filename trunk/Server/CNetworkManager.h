@@ -14,9 +14,9 @@
 class CNetworkManager
 {
 private:
-	CRakServerInterface * m_pRakServer;
-	CServerRPCHandler *   m_pServerRPCHandler;
-	CPacketHandler *      m_pPacketHandler;
+	CRakServerInterface *  m_pRakServer;
+	CServerPacketHandler * m_pServerPacketHandler;
+	CServerRPCHandler *    m_pServerRPCHandler;
 
 public:
 	CNetworkManager();

@@ -9,7 +9,7 @@
 
 #include <StdInc.h>
 
-extern CNetworkManager * g_pNetworkManager;
+extern CClient * g_pClient;
 
 CChatWindow::CChatWindow(CFont * pFont)
 {
@@ -110,6 +110,9 @@ void CChatWindow::OutputMessage(DWORD dwColor, char * szFormat, ...)
 	m_pChatLines[0]->SetColor(dwColor);
 	m_pChatLines[0]->SetText(szBuffer);
 
+	// Write the message to the log file
+	CLogFile::Printf("[ChatMsg:0x%p] %s", dwColor, szBuffer);
+
 	// Increment the total messages count
 	m_uiTotalMessages++;
 }
@@ -194,14 +197,35 @@ void CChatWindow::ProcessInput()
 		if(m_szCurrentInput[0] == '/')
 		{
 			// Check if we have a registered command for it
+			char * szCommand = (m_szCurrentInput + 1);
+
+			g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Entered command '%s'", szCommand);
 
 
 			// TODO: return if processed here
-			//return;
+			// NOTE: HARDCODED FOR NOW
+			// TODO: CClientCommandHandler
+			if(!strcmp(szCommand, "q") || !strcmp(szCommand, "quit") || !strcmp(szCommand, "exit"))
+			{
+				ExitProcess(0);
+				return;
+			}
+			else if(!strcmp(szCommand, "newvehicle"))
+			{
+				g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Creating vehicle at your position!");
+#define MODEL_SULTANRS 0xEE6024BC
+				g_pClient->GetGame()->LoadModel(MODEL_SULTANRS);
+				Vector3 vecPosition;
+				g_pClient->GetLocalPlayer()->GetPosition(&vecPosition);
+				vecPosition.fX += 5; // prevents vehicle landing on player
+				g_pClient->GetGame()->CreateVehicle(MODEL_SULTANRS, &vecPosition); // -346.36f, 1144.80f, 14.79f
+				g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Done!");
+				return;
+			}
 		}
 
 		// Do we have a valid network manager instance?
-		if(g_pNetworkManager)
+		if(g_pClient->GetNetworkManager())
 		{
 			// It's either chat, or an unregistered command, send it to the server
 			CBitStream bitStream;
@@ -224,7 +248,7 @@ void CChatWindow::ProcessInput()
 			bitStream.Write(strInput);
 
 			// Send it to the server
-			g_pNetworkManager->RPC(RPC_CHAT_INPUT, &bitStream, PRIORITY_HIGH, RELIABILITY_RELIABLE_ORDERED);
+			g_pClient->GetNetworkManager()->RPC(RPC_CHAT_INPUT, &bitStream, PRIORITY_HIGH, RELIABILITY_RELIABLE_ORDERED);
 		}
 	}
 }

@@ -32,15 +32,16 @@
 #include <CNetBitStreamInterface.h>
 #include <CBitStreamInterface.h>
 #include <CBitStream.h>
+#include <CPacketHandler.h>
 #include <CRPCHandler.h>
 #include <CRakClientInterface.h>
 #include <CRakServerInterface.h>
 #include <CLibrary.h>
 #include <CNetModule.h>
 #include <CLogFile.h>
+#include <CExceptionHandler.h>
 
 // Project
-#include "CClient.h"
 #include "CDirect3D9Hook.h"
 #include "CDirect3D9Proxy.h"
 #include "CDirect3DDevice9Proxy.h"
@@ -74,3 +75,4 @@
 #include "CLocalPlayer.h"
 #include "CNetworkPlayer.h"
 #include "CPlayerManager.h"
+#include "CClient.h"

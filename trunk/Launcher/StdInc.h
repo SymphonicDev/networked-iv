@@ -36,6 +36,7 @@
 #include <ShlObj.h>
 
 // Shared
+#include <Common.h>
 #include <SharedUtility.h>
 
 #if defined _M_IX86

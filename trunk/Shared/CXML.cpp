@@ -20,6 +20,16 @@ CXML::~CXML()
 
 }
 
+TiXmlDocument * CXML::getDocument()
+{
+	return &m_document;
+}
+
+TiXmlElement * CXML::getNode()
+{
+	return m_node;
+}
+
 bool CXML::load(String strFileName)
 {
 	m_node = NULL;

@@ -12,21 +12,22 @@
 bool    CWindowSubclass::m_bSubclassed = false;
 WNDPROC CWindowSubclass::m_wWndProc;
 
-extern CChatWindow * g_pChatWindow;
+extern CClient * g_pClient;
 
 LRESULT APIENTRY CWindowSubclass::WndProc_Hook(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	// Does our chat window exist?
-	if(g_pChatWindow)
+	if(g_pClient->GetChatWindow())
 	{
 		// Give this input to our chat window
-		if(g_pChatWindow->HandleUserInput(uMsg, (DWORD)wParam))
+		if(g_pClient->GetChatWindow()->HandleUserInput(uMsg, (DWORD)wParam))
 		{
 			// The chat window handled it
 			return 0;
 		}
 	}
 
+	// Return this input back to windows
 	return CallWindowProc(m_wWndProc, hWnd, uMsg, wParam, lParam);
 }
 

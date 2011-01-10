@@ -10,11 +10,10 @@
 #include <StdInc.h>
 
 #ifdef WIN32
-#define SERVER_TITLE "Networked: IV Server"
+#define SERVER_TITLE MOD_NAME " v" MOD_VERSION_STRING " Server"
 #endif
 
 CConfig *          g_pConfig = NULL;
-CNetModule *       g_pNetModule = NULL;
 CNetworkManager *  g_pNetworkManager = NULL;
 CPlayerManager *   g_pPlayerManager = NULL;
 CRootEntity *      g_pRootEntity = NULL;
@@ -39,7 +38,10 @@ bool CServer::OnLoad()
 	// Open the log file
 	CLogFile::Open("Server.log", true);
 
-	CLogFile::Printf("Starting up server");
+	// Install our exception handler
+	CExceptionHandler::Install();
+
+	CLogFile::Printf("Starting up " MOD_NAME " v" MOD_VERSION_STRING " server");
 
 	// Create the config instance
 	g_pConfig = new CConfig();
@@ -53,21 +55,15 @@ bool CServer::OnLoad()
 	CLogFile::Printf("Config instance created");
 
 	// Open the config file
-	if(!g_pConfig->Open("Server.conf"))
-	{
+	if(!g_pConfig->Open(String("%sServer.conf", SharedUtility::GetAppPath())))
 		CLogFile::Printf("Failed to open config file, Settings will default to appropriate values.");
-	}
 	else
-	{
 		CLogFile::Printf("Config file opened");
-	}
 
-	// Create the net module instance
-	g_pNetModule = new CNetModule();
-
-	if(!g_pNetModule)
+	// Initialize the net module
+	if(!CNetModule::Init())
 	{
-		CLogFile::Printf("Failed to create net module instance");
+		CLogFile::Printf("Failed to initialize the net module");
 		return false;
 	}
 
@@ -95,50 +91,49 @@ bool CServer::OnLoad()
 	CLogFile::Printf("Player manager instance created");
 
 	// Get server port
-	int iServerPort = 9999;
-
-	if(!g_pConfig->GetValueAsInteger("Port", &iServerPort))
-	{
-		CLogFile::Printf("Failed to get 'Port' value from config, defaulting to '9999'");
-	}
-	else
-	{
-		CLogFile::Printf("Got 'Port' value '%d' from config", iServerPort);
-	}
+	int iServerPort = GetConfigInteger("port", 9999);
 
 	// Get show fps
-	if(!g_pConfig->GetValueAsBoolean("ShowFPS", &m_bShowFPS))
-	{
-		CLogFile::Printf("Failed to get 'ShowFPS' value from config, defaulting to 'true'");
-	}
-	else
-	{
-		CLogFile::Printf("Got 'ShowFPS' value '%s' from config", m_bShowFPS ? "true" : "false");
-	}
+	m_bShowFPS = GetConfigBoolean("showfps", true);
 
 	// Start up the network manager
 	g_pNetworkManager->Startup(iServerPort, PLAYER_MAX);
 
 	CLogFile::Printf("Network manager started up");
 
-	// Create the resource & scripting manager
+	// Create the resource and scripting manager
 	CEntityIDs::Initalize();
 	g_pRootEntity = new CRootEntity();
 	g_pResourceManager = new CResourceManager();
 
-	// Load resources
-	TiXmlDocument pDocument("Server.conf");
+	// Load resources, get the first resource node
+	if(g_pConfig->GetXML()->findNode("resource"))
+	{
+		while(true)
+		{
+			// Get the resource name
+			String strResource = g_pConfig->GetXML()->nodeContent();
+
+			// Make sure the name is valid and attempt to load the resource
+			if(strResource && !strResource.IsEmpty())
+				g_pResourceManager->Load(strResource);
+
+			// Attempt to load the next resource node (if any)
+			if(!g_pConfig->GetXML()->nextNode())
+				break;
+		}
+	}
+	/*TiXmlDocument pDocument("Server.conf");
 	if(pDocument.LoadFile())
 	{
 		TiXmlNode* pNode = pDocument.RootElement()->FirstChild("resource");
 		while(pNode)
 		{
 			String strResource = pNode->ToElement()->GetText();
-			if(strResource && strResource.GetLength()>0)
-				g_pResourceManager->Load(strResource);
+			
 			pNode = pNode->NextSibling("resource");
 		}
-	}
+	}*/
 
 	// Set the server title
 #ifdef WIN32
@@ -210,8 +205,8 @@ void CServer::OnUnload()
 	// Delete the network manager instance
 	SAFE_DELETE(g_pNetworkManager);
 
-	// Delete the net module instance
-	SAFE_DELETE(g_pNetModule);
+	// Shutdown the net module
+	CNetModule::Shutdown();
 
 	// Delete the config instance
 	SAFE_DELETE(g_pConfig);
@@ -229,7 +224,7 @@ bool CServer::IsActive()
 
 void CServer::SetTitle(String strTitle)
 {
-	SetConsoleTitle(strTitle.C_String());
+	SetConsoleTitle(strTitle);
 }
 
 void CServer::OnCloseEvent()
@@ -248,11 +243,73 @@ void CServer::ProcessInputQueue()
 {
 	if(m_inputQueueMutex.TryLock(0))
 	{
-		if(!m_inputQueue.empty())
+		while(!m_inputQueue.empty())
 		{
-			// Process
+			// Get the input string
+			String strInput = m_inputQueue.front();
+
+			// Erase the input string from the input queue
+			m_inputQueue.pop();
+
+			// Process the input string
+			// NOTE: HARDCODED FOR NOW
+			// TODO: CServerCommandHandler
+			if(!strInput.ICompare("shutdown") || !strInput.ICompare("exit") || !strInput.ICompare("quit"))
+			{
+				// Shutdown command, set the active flag to false and don't process any more input
+				m_bActive = false;
+				break;
+			}
 		}
 
 		m_inputQueueMutex.Unlock();
 	}
+}
+
+String CServer::GetConfigString(String strKey, String strDefaultValue)
+{
+	String strValue;
+
+	if(!(g_pConfig && g_pConfig->GetValueAsString(strKey, strDefaultValue, &strValue)))
+	{
+		CLogFile::Printf("Failed to get '%s' value from config, defaulting to '%s'", strKey.C_String(), strDefaultValue.C_String());
+	}
+
+	return strValue;
+}
+
+int CServer::GetConfigInteger(String strKey, int iDefaultValue)
+{
+	int iValue = 0;
+
+	if(!(g_pConfig && g_pConfig->GetValueAsInteger(strKey, iDefaultValue, &iValue)))
+	{
+		CLogFile::Printf("Failed to get '%s' value from config, defaulting to '%d'", strKey.C_String(), iDefaultValue);
+	}
+
+	return iValue;
+}
+
+float CServer::GetConfigFloat(String strKey, float fDefaultValue)
+{
+	float fValue = 0.0f;
+
+	if(!(g_pConfig && g_pConfig->GetValueAsFloat(strKey, fDefaultValue, &fValue)))
+	{
+		CLogFile::Printf("Failed to get '%s' value from config, defaulting to '%f'", strKey.C_String(), fDefaultValue);
+	}
+
+	return fValue;
+}
+
+bool CServer::GetConfigBoolean(String strKey, bool bDefaultValue)
+{
+	bool bValue = false;
+
+	if(!(g_pConfig && g_pConfig->GetValueAsBoolean(strKey, bDefaultValue, &bValue)))
+	{
+		CLogFile::Printf("Failed to get '%s' value from config, defaulting to '%s'", strKey.C_String(), (bDefaultValue ? "true" : "false"));
+	}
+
+	return bValue;
 }

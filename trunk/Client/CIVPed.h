@@ -46,8 +46,22 @@ enum ePedType
 struct IVPedIntelligence
 {
 	PAD(pad0, 0x44);
-	DWORD * m_pPedTaskManager;
+	DWORD m_pPedTaskManager;
 	// TODO: Find size
+};
+
+struct IVPedWeapon
+{
+	PAD(pad0, 0xC);
+};
+
+struct IVPedWeapons
+{
+	PAD(pad0, 0x3C);           // 000-03C
+	IVPedWeapon m_weapons[10]; // 03C-0B4
+	PAD(pad1, 0x64);           // 0B4-118
+	BYTE m_byteCurrentWeapon;  // 118-119
+	PAD(pad2, 0x1);            // 119-11A
 };
 
 struct IVPed
@@ -60,12 +74,10 @@ struct IVPed
 	PAD(pad2, 0x4);							// 228-22C // CPlayerInfo pointer?
 	PAD(pad3, 0x40);						// 22C-26C
 	BYTE m_byteUnknown;						// 26C-26D - Bits 4: in vehicle
-	PAD(pad4, 0x5B);						// 26D-2C8
-	DWORD dwWeaponSlot;						// 2C8-2CC (Could be like SA's?)
-	PAD(pad5, 0xDC);                        // 26D-3A8
-	IVEntity * pTargettedEntity;            // 3A8-3AC
+	PAD(pad4, 0x43);                        // 26D-2B0
+	IVPedWeapons m_weapons;                 // 2B0-3CA
 	// A70 - Ped Type (BYTE)
-	PAD(pad6, 0x794);						// 3AC-B40
+	PAD(pad6, 0x776);						// 3CA-B40
 	IVVehicle * m_pCurrentVehicle;			// B40-B44
 	PAD(pad7, 0x3BC);						// B44-F00
 };

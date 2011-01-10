@@ -36,6 +36,7 @@
 #include <CNetBitStreamInterface.h>
 #include <CBitStreamInterface.h>
 #include <CBitStream.h>
+#include <CPacketHandler.h>
 #include <CRPCHandler.h>
 #include <CRakServerInterface.h>
 #include <CRakClientInterface.h>
@@ -48,6 +49,7 @@
 #include <CMutex.h>
 #include <CThread.h>
 #include <squirrel/squirrel.h>
+#include <CExceptionHandler.h>
 
 // Project
 #include "CConfig.h"

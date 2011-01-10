@@ -29,7 +29,7 @@ bool CConfig::Open(String strFileName)
 	return m_pXML->load(strFileName);
 }
 
-bool CConfig::GetValueAsString(String strKey, String * strValue)
+bool CConfig::GetValueAsString(String strKey, String strDefaultValue, String * strValue)
 {
 	if(m_pXML->findNode(strKey.C_String()))
 	{
@@ -38,10 +38,11 @@ bool CConfig::GetValueAsString(String strKey, String * strValue)
 		return true;
 	}
 
+	strValue->Set(strDefaultValue);
 	return false;
 }
 
-bool CConfig::GetValueAsInteger(String strKey, int * iValue)
+bool CConfig::GetValueAsInteger(String strKey, int iDefaultValue, int * iValue)
 {
 	if(m_pXML->findNode(strKey.C_String()))
 	{
@@ -50,10 +51,11 @@ bool CConfig::GetValueAsInteger(String strKey, int * iValue)
 		return true;
 	}
 
+	*iValue = iDefaultValue;
 	return false;
 }
 
-bool CConfig::GetValueFloat(String strKey, float * fValue)
+bool CConfig::GetValueAsFloat(String strKey, float fDefaultValue, float * fValue)
 {
 	if(m_pXML->findNode(strKey.C_String()))
 	{
@@ -62,10 +64,11 @@ bool CConfig::GetValueFloat(String strKey, float * fValue)
 		return true;
 	}
 
+	*fValue = fDefaultValue;
 	return false;
 }
 
-bool CConfig::GetValueAsBoolean(String strKey, bool * bValue)
+bool CConfig::GetValueAsBoolean(String strKey, bool bDefaultValue, bool * bValue)
 {
 	if(m_pXML->findNode(strKey.C_String()))
 	{
@@ -86,5 +89,6 @@ bool CConfig::GetValueAsBoolean(String strKey, bool * bValue)
 		return true;
 	}
 
+	*bValue = bDefaultValue;
 	return false;
 }

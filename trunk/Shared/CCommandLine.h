@@ -1,8 +1,8 @@
 //============== Networked: IV - http://code.networked-iv.com ==============
 //
-// File: CServerNatives.h
-// Project: Server
-// Author(s): mabako
+// File: CCommandLine.h
+// Project: Shared
+// Author(s): jenksta
 // License: See LICENSE in root directory
 //
 //==========================================================================
@@ -11,10 +11,11 @@
 
 #include <StdInc.h>
 
-class CServerNatives
+class CCommandLine
 {
+private:
+	static std::map<String, String> m_commandLineOptions;
+
 public:
-	static void LoadFunctions(CSquirrel* pSquirrel);
-	static int  Log(SQVM* pVM);
-	static int  TickCount(SQVM* pVM);
+	void Parse();
 };

@@ -186,6 +186,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\CExceptionHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\CLibrary.cpp"
 				>
 			</File>
@@ -388,6 +392,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\Shared\CPacketHandler.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\Shared\CRPCHandler.cpp"
 						>
 					</File>
@@ -401,6 +409,10 @@
 			>
 			<File
 				RelativePath=".\CClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\CExceptionHandler.h"
 				>
 			</File>
 			<File
@@ -583,6 +595,10 @@
 					</File>
 					<File
 						RelativePath="..\Shared\CPacket.h"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\CPacketHandler.h"
 						>
 					</File>
 					<File

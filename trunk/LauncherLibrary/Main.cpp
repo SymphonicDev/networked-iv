@@ -15,16 +15,16 @@ CreateProcessW_t g_pfnCreateProcessW;
 
 int ShowMessageBox(char * szText, UINT uType = (MB_ICONEXCLAMATION | MB_OK))
 {
-	return MessageBox(NULL, szText, "Networked: IV", uType);
+	return MessageBox(NULL, szText, MOD_NAME, uType);
 }
 
 BOOL WINAPI CreateProcessW_Hook(LPCWSTR lpApplicationName, LPWSTR lpCommandLine, LPSECURITY_ATTRIBUTES lpProcessAttributes, LPSECURITY_ATTRIBUTES lpThreadAttributes, BOOL bInheritHandles, DWORD dwCreationFlags, LPVOID lpEnvironment, LPCWSTR lpCurrentDirectory, LPSTARTUPINFOA lpStartupInfo, LPPROCESS_INFORMATION lpProcessInformation)
 {
 	// CreateProcessW(GTAIV.exe, "\"path/to/exe.exe\"", "path/to/exe.exe", CREATE_NEW_PROCESS_GROUP)
 	// The only call to CreateProcessW from LaunchGTAIV.exe should be to GTAIV.exe
-	// however i should add an application name check anyway
+	// however i should add an application name check to be safe
 
-	// Add the CREATE_SUSPENDED flag to the creation flags
+	// Set the CREATE_SUSPENDED flag in the creation flags
 	dwCreationFlags |= CREATE_SUSPENDED;
 
 	// Get the GTA IV install directory from the registry
@@ -49,9 +49,7 @@ BOOL WINAPI CreateProcessW_Hook(LPCWSTR lpApplicationName, LPWSTR lpCommandLine,
 				{
 					// Get the name of the selected folder
 					if(SHGetPathFromIDList(pItemIdList, szInstallDirectory))
-					{
 						bFoundCustomDirectory = true;
-					}
 
 					// Free any memory used
 					IMalloc * pIMalloc = 0;
@@ -86,9 +84,7 @@ BOOL WINAPI CreateProcessW_Hook(LPCWSTR lpApplicationName, LPWSTR lpCommandLine,
 
 	// If we have a custom directory save it
 	if(bFoundCustomDirectory)
-	{
 		SharedUtility::WriteRegistryString(HKEY_CURRENT_USER, "Software\\NIV", "gtaivdir", szInstallDirectory, strlen(szInstallDirectory));
-	}
 
 	// Convert the install directory to unicode
 	wchar_t wszInstallDirectory[MAX_PATH];

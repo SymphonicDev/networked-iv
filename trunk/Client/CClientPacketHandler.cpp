@@ -1,33 +1,19 @@
 //============== Networked: IV - http://code.networked-iv.com ==============
 //
-// File: CPacketHandler.cpp
+// File: CClientPacketHandler.cpp
 // Project: Client
 // Author(s): jenksta
 // License: See LICENSE in root directory
 //
 //==========================================================================
 
-// TODO: Shared packet handler then CClient/ServerPackets (Like the RPC system)
-
 #include <StdInc.h>
 
 extern CClient * g_pClient;
-extern CNetworkManager * g_pNetworkManager;
-extern CChatWindow * g_pChatWindow;
 
-CPacketHandler::CPacketHandler()
+void CClientPacketHandler::ConnectionSucceeded(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-
-}
-
-CPacketHandler::~CPacketHandler()
-{
-
-}
-
-void CPacketHandler::ConnectionSucceeded(CBitStreamInterface * pBitStream, EntityId playerId)
-{
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connection established!");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Connection established!");
 
 	// Construct the initial data bit stream
 	CBitStream bitStream;
@@ -36,96 +22,73 @@ void CPacketHandler::ConnectionSucceeded(CBitStreamInterface * pBitStream, Entit
 	bitStream.Write(g_pClient->GetNick());
 
 	// Send the initial data bit stream
-	g_pNetworkManager->RPC(RPC_INITIAL_DATA, &bitStream, PRIORITY_HIGH, RELIABILITY_RELIABLE_ORDERED);
+	g_pClient->GetNetworkManager()->RPC(RPC_INITIAL_DATA, &bitStream, PRIORITY_HIGH, RELIABILITY_RELIABLE_ORDERED);
 }
 
-void CPacketHandler::ConnectionFailed(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientPacketHandler::ConnectionFailed(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Timeout)");
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Retrying...");
-	g_pNetworkManager->Connect();
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Timeout)");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Retrying...");
+	g_pClient->GetNetworkManager()->Connect();
 }
 
-void CPacketHandler::AlreadyConnected(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientPacketHandler::AlreadyConnected(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Already Connected)");
-	g_pNetworkManager->Disconnect();
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Already Connected)");
 }
 
-void CPacketHandler::ServerFull(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientPacketHandler::ServerFull(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Server Full)");
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Retrying...");
-	g_pNetworkManager->Connect();
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Server Full)");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Retrying...");
+	g_pClient->GetNetworkManager()->Connect();
 }
 
-void CPacketHandler::Disconnected(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientPacketHandler::Disconnected(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Disconnected from the server.");
-	g_pNetworkManager->Disconnect();
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Disconnected from the server.");
+	g_pClient->GetNetworkManager()->Disconnect();
 }
 
-void CPacketHandler::LostConnection(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientPacketHandler::LostConnection(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connection to server lost!");
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Reconnecting...");
-	g_pNetworkManager->Connect();
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Connection to server lost!");
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Reconnecting...");
+	g_pClient->GetNetworkManager()->Connect();
 }
 
-void CPacketHandler::Banned(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientPacketHandler::Banned(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Banned)");
-	g_pNetworkManager->Disconnect();
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Banned)");
+	g_pClient->GetNetworkManager()->Disconnect();
 }
 
-void CPacketHandler::PasswordInvalid(CBitStreamInterface * pBitStream, EntityId playerId)
+void CClientPacketHandler::PasswordInvalid(CBitStreamInterface * pBitStream, EntityId playerId)
 {
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Invalid Password)");
-	g_pNetworkManager->Disconnect();
+	g_pClient->GetChatWindow()->OutputMessage(MESSAGE_INFO_COLOR, "Connection failed! (Invalid Password)");
+	g_pClient->GetNetworkManager()->Disconnect();
 }
 
-bool CPacketHandler::HandlePacket(CPacket * pPacket)
+void CClientPacketHandler::Register()
 {
-	// Construct the packet BitStream
-	CBitStream bitStream(pPacket->ucData, pPacket->uLength, false);
+	AddFunction(PACKET_CONNECTION_SUCCEEDED, ConnectionSucceeded);
+	AddFunction(PACKET_CONNECTION_FAILED, ConnectionFailed);
+	AddFunction(PACKET_ALREADY_CONNECTED, AlreadyConnected);
+	AddFunction(PACKET_SERVER_FULL, ServerFull);
+	AddFunction(PACKET_DISCONNECTED, Disconnected);
+	AddFunction(PACKET_LOST_CONNECTION, LostConnection);
+	AddFunction(PACKET_BANNED, Banned);
+	AddFunction(PACKET_PASSWORD_INVALID, PasswordInvalid);
+}
 
-	// See if we can handle the packet
-	switch(pPacket->packetId)
-	{
-	case PACKET_CONNECTION_SUCCEEDED:
-		ConnectionSucceeded(&bitStream, pPacket->playerId);
-		return true;
-		break;
-	case PACKET_CONNECTION_FAILED:
-		ConnectionFailed(&bitStream, pPacket->playerId);
-		return true;
-		break;
-	case PACKET_ALREADY_CONNECTED:
-		AlreadyConnected(&bitStream, pPacket->playerId);
-		return true;
-		break;
-	case PACKET_SERVER_FULL:
-		ServerFull(&bitStream, pPacket->playerId);
-		return true;
-		break;
-	case PACKET_DISCONNECTED:
-		Disconnected(&bitStream, pPacket->playerId);
-		return true;
-		break;
-	case PACKET_LOST_CONNECTION:
-		LostConnection(&bitStream, pPacket->playerId);
-		return true;
-		break;
-	case PACKET_BANNED:
-		Banned(&bitStream, pPacket->playerId);
-		return true;
-		break;
-	case PACKET_PASSWORD_INVALID:
-		PasswordInvalid(&bitStream, pPacket->playerId);
-		return true;
-		break;
-	}
-
-	// Not handled
-	return false;
+void CClientPacketHandler::Unregister()
+{
+	RemoveFunction(PACKET_CONNECTION_SUCCEEDED);
+	RemoveFunction(PACKET_CONNECTION_FAILED);
+	RemoveFunction(PACKET_ALREADY_CONNECTED);
+	RemoveFunction(PACKET_SERVER_FULL);
+	RemoveFunction(PACKET_DISCONNECTED);
+	RemoveFunction(PACKET_LOST_CONNECTION);
+	RemoveFunction(PACKET_BANNED);
+	RemoveFunction(PACKET_PASSWORD_INVALID);
 }

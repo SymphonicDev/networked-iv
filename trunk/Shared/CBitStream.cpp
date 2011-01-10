@@ -9,21 +9,19 @@
 
 #include <StdInc.h>
 
-extern CNetModule * g_pNetModule;
-
 CBitStream::CBitStream()
 {
-	m_pBitStream = g_pNetModule->GetBitStreamInterface1();
+	m_pBitStream = CNetModule::GetBitStreamInterface1();
 }
 
 CBitStream::CBitStream(const unsigned int initialBytesToAllocate)
 {
-	m_pBitStream = g_pNetModule->GetBitStreamInterface2(initialBytesToAllocate);
+	m_pBitStream = CNetModule::GetBitStreamInterface2(initialBytesToAllocate);
 }
 
 CBitStream::CBitStream(unsigned char* _data, const unsigned int lengthInBytes, bool _copyData)
 {
-	m_pBitStream = g_pNetModule->GetBitStreamInterface3(_data, lengthInBytes, _copyData);
+	m_pBitStream = CNetModule::GetBitStreamInterface3(_data, lengthInBytes, _copyData);
 }
 
 CBitStream::~CBitStream()

@@ -55,6 +55,7 @@ void InputThread(CThread * pCreator)
 	while(pCreator->GetUserData<bool>())
 	{
 		// Wait for input from the console
+		// TODO: Make non-blocking
 		fgets(szInputBuffer, sizeof(szInputBuffer), stdin);
 
 		// Do we have anything in the input?
@@ -136,7 +137,7 @@ int main()
 
 	// Stop the input thread
 	inputThread.SetUserData<bool>(false);
-	inputThread.Stop();
+	inputThread.Stop(false); // NOTE: Revert to true when input thread is non-blocking
 
 	// Call the server OnUnload event
 	g_pServer->OnUnload();

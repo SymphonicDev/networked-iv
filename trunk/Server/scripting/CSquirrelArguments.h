@@ -3,6 +3,7 @@
 // File: CSquirrelArguments.h
 // Project: Server
 // Author(s): mabako
+//            jenksta
 // License: See LICENSE in root directory
 //
 //==========================================================================
@@ -21,7 +22,9 @@ class CSquirrelArguments;
 
 class CSquirrelArgument
 {
+private:
 	SQObjectType type;
+
 public:
 	union {
 		int i;
@@ -36,7 +39,7 @@ public:
 	CSquirrelArgument(int i){type=OT_INTEGER; data.i=i;}
 	CSquirrelArgument(bool b){type=OT_BOOL; data.b=b;}
 	CSquirrelArgument(float f){type=OT_FLOAT; data.f=f;}
-	CSquirrelArgument(String* str){type=OT_STRING; data.str=str;}
+	CSquirrelArgument(String* str){type=OT_STRING; data.str = new String(*str);} // clone the string instead of referencing it
 	CSquirrelArgument(CEntity* pEntity){type=OT_FUNCPROTO; data.pEntity=pEntity;}
 	CSquirrelArgument(CSquirrelArguments* pArray, bool isArray);
 

@@ -35,4 +35,8 @@ public:
 	void        SetTitle(String strTitle);
 	void        OnCloseEvent();
 	void        AddToInputQueue(String strString);
+	String      GetConfigString(String strKey, String strDefaultValue);
+	int         GetConfigInteger(String strKey, int iDefaultValue);
+	float       GetConfigFloat(String strKey, float fDefaultValue);
+	bool        GetConfigBoolean(String strKey, bool bDefaultValue);
 };

@@ -24,27 +24,29 @@ typedef void                     (* DestroyBitStreamInterface_t)(CNetBitStreamIn
 class CNetModule
 {
 private:
-	CLibrary * m_pLibrary;
-	GetRakServerInterface_t m_pfnGetRakServerInterface;
-	DestroyRakServerInterface_t m_pfnDestroyRakServerInterface;
-	GetRakClientInterface_t m_pfnGetRakClientInterface;
-	DestroyRakClientInterface_t m_pfnDestroyRakClientInterface;
-	GetBitStreamInterface1_t m_pfnGetBitStreamInterface1;
-	GetBitStreamInterface2_t m_pfnGetBitStreamInterface2;
-	GetBitStreamInterface3_t m_pfnGetBitStreamInterface3;
-	DestroyBitStreamInterface_t m_pfnDestroyBitStreamInterface;
+	static CLibrary *                  m_pLibrary;
+	static GetRakServerInterface_t     m_pfnGetRakServerInterface;
+	static DestroyRakServerInterface_t m_pfnDestroyRakServerInterface;
+	static GetRakClientInterface_t     m_pfnGetRakClientInterface;
+	static DestroyRakClientInterface_t m_pfnDestroyRakClientInterface;
+	static GetBitStreamInterface1_t    m_pfnGetBitStreamInterface1;
+	static GetBitStreamInterface2_t    m_pfnGetBitStreamInterface2;
+	static GetBitStreamInterface3_t    m_pfnGetBitStreamInterface3;
+	static DestroyBitStreamInterface_t m_pfnDestroyBitStreamInterface;
 
 public:
 	CNetModule();
 	~CNetModule();
 
-	bool                     VerifyVersion(BYTE byteVersion);
-	CRakServerInterface *    GetRakServerInterface();
-	void                     DestroyRakServerInterface(CRakServerInterface * pRakServer);
-	CRakClientInterface *    GetRakClientInterface();
-	void                     DestroyRakClientInterface(CRakClientInterface * pRakClient);
-	CNetBitStreamInterface * GetBitStreamInterface1();
-	CNetBitStreamInterface * GetBitStreamInterface2(const unsigned int initialBytesToAllocate);
-	CNetBitStreamInterface * GetBitStreamInterface3(unsigned char* _data, const unsigned int lengthInBytes, bool _copyData);
-	void                     DestroyBitStreamInterface(CNetBitStreamInterface * pBitStream);
+	static bool                     Init();
+	static void                     Shutdown();
+	static bool                     VerifyVersion(BYTE byteVersion);
+	static CRakServerInterface *    GetRakServerInterface();
+	static void                     DestroyRakServerInterface(CRakServerInterface * pRakServer);
+	static CRakClientInterface *    GetRakClientInterface();
+	static void                     DestroyRakClientInterface(CRakClientInterface * pRakClient);
+	static CNetBitStreamInterface * GetBitStreamInterface1();
+	static CNetBitStreamInterface * GetBitStreamInterface2(const unsigned int initialBytesToAllocate);
+	static CNetBitStreamInterface * GetBitStreamInterface3(unsigned char* _data, const unsigned int lengthInBytes, bool _copyData);
+	static void                     DestroyBitStreamInterface(CNetBitStreamInterface * pBitStream);
 };

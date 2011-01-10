@@ -9,20 +9,23 @@
 
 #include <StdInc.h>
 
-CGame *           g_pGame = NULL;
-CXLiveHook *      g_pXLiveHook = NULL;
-CDirect3D9Hook *  g_pDirect3D9Hook = NULL;
-CNetModule *      g_pNetModule = NULL;
-CNetworkManager * g_pNetworkManager = NULL;
-CLocalPlayer *    g_pLocalPlayer = NULL;
-CPlayerManager *  g_pPlayerManager = NULL;
-CFont *           g_pFont = NULL;
-CChatWindow *     g_pChatWindow = NULL;
-
 bool CClient::OnLoad()
 {
 	// Open the log file
 	CLogFile::Open("Client.log");
+
+	// Install our exception handler
+	CExceptionHandler::Install();
+
+	// Reset the class object pointers
+	m_pGame = NULL;
+	m_pXLiveHook = NULL;
+	m_pDirect3D9Hook = NULL;
+	m_pNetworkManager = NULL;
+	m_pLocalPlayer = NULL;
+	m_pPlayerManager = NULL;
+	m_pFont = NULL;
+	m_pChatWindow = NULL;
 
 	// Reset the port and set the nick limit
 	m_usPort = 0;
@@ -120,54 +123,58 @@ bool CClient::OnLoad()
 	CLogFile::Printf("base address is 0x%p", m_uiBaseAddress);
 
 	// Create the game instance
-	g_pGame = new CGame();
+	m_pGame = new CGame();
 
 	// If the instance creation failed, exit
-	if(!g_pGame)
+	if(!m_pGame)
 		return false;
 
 	CLogFile::Printf("game instance created");
 
 	// Apply the game patches
-	g_pGame->ApplyPatches();
+	m_pGame->ApplyPatches();
 
 	CLogFile::Printf("game patches applied");
 
 	// Create the xlive hook instance
-	g_pXLiveHook = new CXLiveHook();
+	m_pXLiveHook = new CXLiveHook();
 
 	// If the instance creation failed, exit
-	if(!g_pXLiveHook)
+	if(!m_pXLiveHook)
 		return false;
 
 	CLogFile::Printf("xlive hook instance created");
 
 	// Install the xlive hook
-	g_pXLiveHook->Install();
+	m_pXLiveHook->Install();
 
 	CLogFile::Printf("xlive hook installed");
 
 	// Create the d3d9 hook instance
-	g_pDirect3D9Hook = new CDirect3D9Hook();
+	m_pDirect3D9Hook = new CDirect3D9Hook();
 
 	// If the instance creation failed, exit
-	if(!g_pDirect3D9Hook)
+	if(!m_pDirect3D9Hook)
 		return false;
 
 	CLogFile::Printf("d3d9 instance created");
 
 	// Install the d3d9 hook
-	g_pDirect3D9Hook->Install();
+	m_pDirect3D9Hook->Install();
 
 	CLogFile::Printf("d3d9 hook installed");
 
-	// Create the net module instance
-	g_pNetModule = new CNetModule();
+	// Initialize the net module, if it fails, exit
+	if(!CNetModule::Init())
+	{
+		CLogFile::Printf("Failed to initialize the net module");
+		return false;
+	}
 
-	CLogFile::Printf("net module instance created");
+	CLogFile::Printf("net module initialized");
 
 	// Create the network manager instance
-	g_pNetworkManager = new CNetworkManager();
+	m_pNetworkManager = new CNetworkManager();
 
 	CLogFile::Printf("network manager instance created");
 
@@ -178,73 +185,70 @@ bool CClient::OnLoad()
 void CClient::OnUnload()
 {
 	// Delete the chat window instance
-	SAFE_DELETE(g_pChatWindow);
+	SAFE_DELETE(m_pChatWindow);
 
 	// Delete the font instance
-	SAFE_DELETE(g_pFont);
+	SAFE_DELETE(m_pFont);
 
 	// Delete the player manager instance
-	SAFE_DELETE(g_pPlayerManager);
+	SAFE_DELETE(m_pPlayerManager);
 
 	// Delete the local player instance
-	SAFE_DELETE(g_pLocalPlayer);
+	SAFE_DELETE(m_pLocalPlayer);
 
 	// Delete the network manager instance
-	SAFE_DELETE(g_pNetworkManager);
+	SAFE_DELETE(m_pNetworkManager);
 
-	// Delete the net module instance
-	SAFE_DELETE(g_pNetModule);
+	// Shutdown the net module
+	CNetModule::Shutdown();
 
 	// Uninstall the d3d9 hook
-	if(g_pDirect3D9Hook)
-		g_pDirect3D9Hook->Uninstall();
+	if(m_pDirect3D9Hook)
+		m_pDirect3D9Hook->Uninstall();
 
 	// Delete the d3d9 hook instance
-	SAFE_DELETE(g_pDirect3D9Hook);
+	SAFE_DELETE(m_pDirect3D9Hook);
 
 	// Uninstall the xlive hook
-	g_pXLiveHook->Uninstall();
+	m_pXLiveHook->Uninstall();
 
 	// Delete the xlive hook instance
-	SAFE_DELETE(g_pXLiveHook);
+	SAFE_DELETE(m_pXLiveHook);
 
 	// Close the log file
 	CLogFile::Close();
-}
-
-unsigned int CClient::GetBaseAddress()
-{
-	return m_uiBaseAddress;
 }
 
 void CClient::OnD3DCreateDevice(IDirect3DDevice9 * pD3DDevice)
 {
 	CLogFile::Printf("d3d create");
 	// Create our font instance
-	g_pFont = new CD3DXFont(pD3DDevice, 14, 0, FW_BOLD, "Tahoma");
+	m_pFont = new CD3DXFont(pD3DDevice, 14, 0, FW_BOLD, "Tahoma");
 
 	// Create out chat window instance
-	g_pChatWindow = new CChatWindow(g_pFont);
-	//
-	g_pChatWindow->Enable();
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Chat window initialized!");
-	//
+	m_pChatWindow = new CChatWindow(m_pFont);
+	m_pChatWindow->Enable();
+	m_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Chat window initialized!");
 }
 
 void CClient::OnD3DLostDevice(IDirect3DDevice9 * pD3DDevice)
 {
 	// Does the font exist?
-	if(g_pFont)
+	if(m_pFont)
+	{
 		// Inform it of the device loss
-		g_pFont->OnDeviceLost();
+		m_pFont->OnDeviceLost();
+	}
 }
 
 void CClient::OnD3DResetDevice(IDirect3DDevice9 * pD3DDevice)
 {
 	// Does the font exist?
-	if(g_pFont)
+	if(m_pFont)
+	{
 		// Inform it of the device reset
-		g_pFont->OnDeviceReset();
+		m_pFont->OnDeviceReset();
+	}
 }
 
 void CClient::OnD3DBeginScene(IDirect3DDevice9 * pD3DDevice)
@@ -254,7 +258,6 @@ void CClient::OnD3DBeginScene(IDirect3DDevice9 * pD3DDevice)
 
 bool bCreatePlayer = false;
 CPlayer * pPlayers[32];
-bool bCreateVehicle = false;
 bool bChangeModel = false;
 
 void CClient::OnD3DEndScene(IDirect3DDevice9 * pD3DDevice)
@@ -288,22 +291,11 @@ void CClient::OnD3DEndScene(IDirect3DDevice9 * pD3DDevice)
 
 		bCreatePlayer = !bCreatePlayer;
 	}
-	else if(GetAsyncKeyState(VK_F4) && !bCreateVehicle)
-	{
-		CLogFile::Printf("Creating vehicle...");
-#define MODEL_SULTANRS 0xEE6024BC
-		g_pGame->LoadModel(MODEL_SULTANRS);
-		g_pGame->CreateVehicle(MODEL_SULTANRS);
-		//unsigned int uVehicleHandle;
-		//InvokeNative<void *>(0x2F1D6843, MODEL_SULTANRS, -346.36f, 1144.80f, 14.79f, &uVehicleHandle, true); // CREATE_CAR // MODEL_SULTANRS
-		CLogFile::Printf("Vehicle created!");
-		bCreateVehicle = true;
-	}
 	else if(GetAsyncKeyState(VK_F5) && !bChangeModel)
 	{
 		CLogFile::Printf("Changing model...");
 #define MODEL_IG_BRUCIE 0x98E29920
-		int iModelIndex = g_pGame->LoadModel(MODEL_IG_BRUCIE);
+		int iModelIndex = m_pGame->LoadModel(MODEL_IG_BRUCIE);
 		CLogFile::Printf("Model loaded");
 #define FUNC_CPlayerPed__SetModelIndex 0x9C0AA0
 		DWORD dwFunc = (GetBaseAddress() + FUNC_CPlayerPed__SetModelIndex);
@@ -323,41 +315,36 @@ void CClient::OnD3DEndScene(IDirect3DDevice9 * pD3DDevice)
 	}
 
 	// Does the chat window exist?
-	if(g_pChatWindow)
+	if(m_pChatWindow)
 	{
 		// Draw it
-		g_pChatWindow->Draw();
+		m_pChatWindow->Draw();
 	}
 
 	// Does the network manager exist?
-	if(g_pNetworkManager)
+	if(m_pNetworkManager)
 	{
 		// Process it
-		g_pNetworkManager->Process();
+		m_pNetworkManager->Process();
 	}
 }
 
 void CClient::OnGameLoad()
 {
 	// Create the local player instance
-	g_pLocalPlayer = new CLocalPlayer();
+	m_pLocalPlayer = new CLocalPlayer();
 
 	CLogFile::Printf("local player instance created");
 
 	// Create the player manager instance
-	g_pPlayerManager = new CPlayerManager();
+	m_pPlayerManager = new CPlayerManager();
 
 	CLogFile::Printf("player manager instance created");
 
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Game loaded!");
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Starting network manager...");
-	g_pNetworkManager->Startup(m_strIp, m_usPort, m_strPassword);
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Network manager started!");
-	g_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Establishing connection to %s:%d...", m_strIp.C_String(), m_usPort);
-	g_pNetworkManager->Connect();
-}
-
-String CClient::GetNick()
-{
-	return m_strNick;
+	m_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Game loaded!");
+	m_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Starting network manager...");
+	m_pNetworkManager->Startup(m_strIp, m_usPort, m_strPassword);
+	m_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Network manager started!");
+	m_pChatWindow->OutputMessage(MESSAGE_INFO_COLOR, "Establishing connection to %s:%d...", m_strIp.C_String(), m_usPort);
+	m_pNetworkManager->Connect();
 }

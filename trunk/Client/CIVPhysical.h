@@ -23,8 +23,10 @@ struct IVPhysical
 	PAD(pad0, 0xD8);				 // 10C-1E4
 	IVEntity * m_pLastDamageEntity;  // 1E4-1E8
 	// 1F0 = Health?
-	PAD(pad1, 0xC);					 // 1E8-1F4
-	PAD(pad2, 0x1C);				 // 1F4-210
+	PAD(pad1, 0x4);                  // 1E8-1EC
+	DWORD      m_dwLastDamageWeapon; // 1EC-1F0 // -1: None, WeaponId: Weapon, 56-57: Special (Possibly vehicle damage?)
+	PAD(pad2, 0x4);                  // 1F0-1F4
+	PAD(pad3, 0x1C);				 // 1F4-210
 };
 
 class CIVPhysical : public CIVDynamicEntity

@@ -12,7 +12,6 @@
 #define MODEL_PLAYER 0x6F0783F5
 
 extern CClient * g_pClient;
-extern CGame *   g_pGame;
 
 // Quick And Hacky Player Ped Slot Code
 bool bInitQuickAndHackyPlayerPedSlotCode = false;
@@ -118,7 +117,7 @@ bool CPlayer::Create()
 			return false;
 
 		// Load model (if needed) and get model index
-		int iModelIndex = g_pGame->LoadModel(m_dwModelHash);
+		int iModelIndex = g_pClient->GetGame()->LoadModel(m_dwModelHash);
 
 		// Invalid model hash?
 		if(iModelIndex == -1)
@@ -240,7 +239,7 @@ void CPlayer::Destroy()
 bool CPlayer::SetModelByHash(DWORD dwModelHash)
 {
 	// Get the model index from the hash
-	int iModelIndex = g_pGame->GetModelIndexByHash(dwModelHash);
+	int iModelIndex = g_pClient->GetGame()->GetModelIndexByHash(dwModelHash);
 
 	// Is the model index valid?
 	if(iModelIndex != -1)

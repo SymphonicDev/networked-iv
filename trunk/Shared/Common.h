@@ -14,21 +14,21 @@
 // Mod name
 #define MOD_NAME "Networked: IV"
 
+// Mod debug version
+#ifdef _DEBUG
+#define MOD_VER_DBG "-debug"
+#else
+#define MOD_VER_DBG
+#endif
+
 // Mod version string
-#define MOD_VERSION_STRING "TODO"
+#define MOD_VERSION_STRING "1.0-pre-alpha-1" MOD_VER_DBG
 
 // Network module version
 #define NETWORK_MODULE_VERSION 0x1
 
 // Network version
 #define NETWORK_VERSION 0x1
-
-// Debug identifier
-#ifdef _DEBUG
-#define DEBUG_IDENTIFIER " - Debug"
-#else
-#define DEBUG_IDENTIFIER
-#endif
 
 // Max player limit
 #define PLAYER_MAX 32

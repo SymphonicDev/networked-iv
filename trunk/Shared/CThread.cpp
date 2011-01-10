@@ -79,6 +79,15 @@ bool CThread::Stop(bool bWaitForExit)
 			}
 		}
 
+		// Set the running state to false
+		SetRunning(false);
+
+		// Set the started state to false
+		SetStarted(false);
+
+		// Reset the thread handle
+		m_hThread = NULL;
+
 		return true;
 	}
 

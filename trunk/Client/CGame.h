@@ -55,7 +55,7 @@ public:
 	bool         HasModelLoaded(DWORD dwModelHash);
 	void         UnloadModel(DWORD dwModelHash);
 	int          LoadModel(DWORD dwModelHash);
-	DWORD        CreateVehicle(DWORD dwModelHash);
+	DWORD        CreateVehicle(DWORD dwModelHash, Vector3 * vecPosition);
 	void         DeleteVehicle(DWORD dwVehicle);
 	void         FadeScreen(eFadeType fadeType, int iTime);
 };
